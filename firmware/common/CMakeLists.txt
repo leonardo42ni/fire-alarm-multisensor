@@ -1,0 +1,6 @@
+if(DEFINED ESP_PLATFORM)
+    idf_component_register(INCLUDE_DIRS ".")
+else()
+    add_library(fire_common INTERFACE)
+    target_include_directories(fire_common INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+endif()

@@ -1,0 +1,35 @@
+# ESP-IDF build outputs
+build/
+build_host/
+sdkconfig
+sdkconfig.old
+managed_components/
+
+# Secrets (commit only *.example.*)
+secrets.h
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node.js
+node_modules/
+
+# Test artifacts (keep .gitkeep)
+tests/results/*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.pio/
+.clangd
+.devcontainer/
+CMakePresets.json
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,0 +1,4 @@
+#ifndef FIRE_COMMON_SHARED_CONFIG_H
+#define FIRE_COMMON_SHARED_CONFIG_H
+
+#endif
