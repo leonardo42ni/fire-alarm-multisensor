@@ -24,11 +24,12 @@ foreach ($name in $projects) {
         $exitCode = $LASTEXITCODE
     }
     catch {
-        Pop-Location
         Write-Host "[FAIL] $name : $($_.Exception.Message)" -ForegroundColor Red
         exit 1
     }
-    Pop-Location
+    finally {
+        Pop-Location
+    }
 
     if ($exitCode -ne 0) {
         Write-Host "[FAIL] $name build exit=$exitCode" -ForegroundColor Red

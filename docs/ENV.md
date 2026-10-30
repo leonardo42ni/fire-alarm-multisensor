@@ -10,8 +10,6 @@
 | Ninja | IDF bundled | Đã dùng để build thành công cả 3 firmware |
 | Node.js | 20 LTS | Chưa xác minh (chưa cần cho T-002) |
 
-Cập nhật cột "Trạng thái" sau khi hoàn tất T-001.
-
 ## Cài ESP-IDF 5.5.x trên Windows (PowerShell)
 
 ```powershell

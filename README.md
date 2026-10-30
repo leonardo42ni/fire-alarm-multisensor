@@ -19,8 +19,9 @@ Xem `docs/ENV.md`. Toolchain bắt buộc: ESP-IDF 5.5.x (`idf.py`), CMake/CTest
 
 ## Build firmware
 
+Nạp môi trường theo `docs/ENV.md` (lưu ý thứ tự PATH Python 3.11), rồi chạy:
+
 ```powershell
-. $HOME\esp\esp-idf\export.ps1
 .\tools\build_all.ps1
 ```
 
