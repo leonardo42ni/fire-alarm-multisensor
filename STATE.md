@@ -1,7 +1,7 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `feat/T-002-skeleton`
+- **Nhánh Git:** `master` (nhánh `feat/T-002-skeleton` đã được gộp vào `master` tại `f357c23`)
 - **Task vừa hoàn thành:** `T-002` — Đã tạo cây thư mục, `.gitignore`, 3 project ESP-IDF khung (`node_h2`, `gw_h2`, `gw_host`), `docs/API_NOTES.md`, `docs/ENV.md`, `docs/pinmap_verified.md` và `tools/build_all.ps1`.
   - **Phạm vi app_main:** mỗi project chỉ in 3 dòng: tên firmware, `FW_VERSION`, `esp_reset_reason()`. Không có code cảm biến/Zigbee/Fusion và không khởi tạo đầu ra.
   - **Trạng thái nghiệm thu:** Đã chạy lại `tools/build_all.ps1` ngày 2026-11-01 với ESP-IDF **v5.5.5** → `[PASS] node_h2`, `[PASS] gw_h2`, `[PASS] gw_host`, `[PASS] Ca 3 firmware build thanh cong.` (exit 0). `secrets.h` không bị track và đã được `.gitignore`.
@@ -9,6 +9,7 @@
   - **Dọn dẹp:** Đã xóa `build/` cũ (được cấu hình cho `X:\firmware\...`) rồi build lại từ đầu.
   - **Quyết định của người dùng:** giữ `EXTRA_COMPONENT_DIRS` dạng tương đối `"../common"`, `"../lib_fusion"`; thêm `.clangd`, `.devcontainer/`, `CMakePresets.json` vào `.gitignore`; cập nhật `docs/ENV.md` sang v5.5.5; commit T-002.
   - **Sửa theo review:** Đã áp dụng R1–R5 (đánh dấu `[VERIFY T-006]` cho Kconfig Zigbee, bổ sung `ESP_LOGI` vào `API_NOTES.md`, ghi chú stub T-003, đồng bộ README/ENV, bọc `Pop-Location` trong `finally`) — commit `f357c23`.
+  - **Gia cố môi trường build (2026-11-01):** `tools/build_all.ps1` tự ưu tiên venv Python và tự bỏ `IDF_TARGET` toàn cục; `docs/ENV.md` cập nhật đúng thứ tự `PATH` và bước xóa `IDF_TARGET`.
 - **Task tiếp theo cần làm:**
   - `T-003`: Tạo/hoàn thiện `config.h` (×3), `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; thêm `#error` khi thiếu `secrets.h` cho `gw_host`.
   - `T-004`: Thiết lập `tests/host/CMakeLists.txt` và `test_util.h` để chạy `ctest` trên PC.

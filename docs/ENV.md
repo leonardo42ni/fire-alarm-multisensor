@@ -25,6 +25,8 @@ Máy nghiệm thu hiện tại cài bằng ESP-IDF Installer tại `E:\Espressif
 Nạp môi trường cho mỗi phiên làm việc:
 
 ```powershell
+$env:PATH = "E:\Espressif\python_env\idf5.5_py3.11_env\Scripts;E:\Espressif\tools\idf-python\3.11.2;" + $env:PATH
+Remove-Item Env:IDF_TARGET -ErrorAction SilentlyContinue
 . E:\Espressif\frameworks\esp-idf-v5.5.5\export.ps1
 idf.py --version
 ```
@@ -32,13 +34,9 @@ idf.py --version
 > **Lưu ý Python 3.11 vs 3.15:** `export.ps1` chọn venv theo `python` đầu tiên trong `PATH`.
 > Nếu `PATH` trỏ tới Python 3.15 (Windows Store) trong khi venv đã cài là `idf5.5_py3.11_env`,
 > export sẽ báo `ESP-IDF Python virtual environment "...idf5.5_py3.15_env..." not found`.
-> Đưa Python đi kèm IDF lên đầu `PATH` trước khi export:
->
-> ```powershell
-> $env:PATH = "E:\Espressif\tools\idf-python\3.11.2;" + $env:PATH
-> . E:\Espressif\frameworks\esp-idf-v5.5.5\export.ps1
-> idf.py --version
-> ```
+> Đưa `...\idf5.5_py3.11_env\Scripts` lên đầu `PATH` để `python` có sẵn `click`, sau đó tới
+> Python đi kèm IDF. Nếu shell đang có sẵn `IDF_TARGET` (ví dụ `esp32`), phải xóa trước khi build
+> vì mỗi project tự khai báo target riêng trong `sdkconfig.defaults`.
 
 ## Build
 
@@ -47,6 +45,8 @@ Build cả 3 firmware (sau khi đã export môi trường ở mục trên):
 ```powershell
 .\tools\build_all.ps1
 ```
+
+`build_all.ps1` tự đưa venv Python lên đầu `PATH` và tự bỏ biến `IDF_TARGET` toàn cục trước khi build.
 
 Build riêng từng project:
 

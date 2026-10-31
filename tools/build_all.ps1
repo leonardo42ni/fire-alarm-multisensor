@@ -5,6 +5,20 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $projects = @('node_h2', 'gw_h2', 'gw_host')
 
+# Uu tien python cua venv ESP-IDF de ham idf.py dung dung interpreter co 'click'
+if ($env:IDF_PYTHON_ENV_PATH) {
+    $venvScripts = Join-Path $env:IDF_PYTHON_ENV_PATH 'Scripts'
+    if (Test-Path -LiteralPath $venvScripts) {
+        $env:PATH = "$venvScripts;$env:PATH"
+    }
+}
+
+# Moi project co target rieng trong sdkconfig; IDF_TARGET toan cuc gay mismatch
+if ($env:IDF_TARGET) {
+    Write-Host "[INFO] Bo IDF_TARGET=$env:IDF_TARGET de build theo target tung project." -ForegroundColor Yellow
+    Remove-Item Env:IDF_TARGET -ErrorAction SilentlyContinue
+}
+
 if (-not (Get-Command idf.py -ErrorAction SilentlyContinue)) {
     Write-Host '[FAIL] Khong tim thay idf.py. Hay chay export.ps1 cua ESP-IDF truoc.' -ForegroundColor Red
     exit 1
