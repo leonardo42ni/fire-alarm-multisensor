@@ -1,7 +1,7 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 đã sửa theo review V1–V9, chưa commit)
+- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`)
 - **Task vừa hoàn thành:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
