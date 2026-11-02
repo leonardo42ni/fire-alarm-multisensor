@@ -18,3 +18,5 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 - `esp_reset_reason_t` là enum trong cùng header, gồm `ESP_RST_UNKNOWN`, `ESP_RST_POWERON`,
   `ESP_RST_EXT`, `ESP_RST_SW`, `ESP_RST_PANIC`, `ESP_RST_INT_WDT`, `ESP_RST_TASK_WDT`,
   `ESP_RST_WDT`, `ESP_RST_DEEPSLEEP`, `ESP_RST_BROWNOUT`, `ESP_RST_SDIO`.
+- `app_err_t` (`firmware/common/error.h`) là kiểu nội bộ, không alias sang `esp_err_t`;
+  mọi chuyển đổi phải tường minh.

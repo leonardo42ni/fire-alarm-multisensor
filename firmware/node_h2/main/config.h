@@ -1,6 +1,77 @@
 #ifndef NODE_H2_CONFIG_H
 #define NODE_H2_CONFIG_H
 
+#include "shared_config.h"
+
 #define FW_NAME "node_h2"
+
+#define I2C_SDA_GPIO 10
+#define I2C_SCL_GPIO 11
+#define I2C_FREQ_HZ 100000u
+#define I2C_INTERNAL_PULLUP 0
+#define I2C_GLITCH_IGNORE_CNT 7
+#define I2C_DEV_CACHE_MAX 4
+#define I2C_PROBE_TIMEOUT_MS 50
+#define I2C_XFER_TIMEOUT_MS 100
+#define I2C_RECOVER_PULSES 9
+
+#define SHT31_ADDR 0x44
+#define SHT31_CONV_WAIT_MS 16
+#define SHT31_RESET_WAIT_MS 2
+#define SHT31_RETRY_N 2
+#define SHT31_RH_MIN 0.0f
+#define SHT31_RH_MAX 100.0f
+
+#define CCS811_ADDR 0x5A
+#define CCS811_HW_ID 0x81
+#define CCS811_MEAS_MODE 0x10
+#define CCS811_RESET_WAIT_MS 20
+#define CCS811_APP_START_WAIT_MS 20
+#define CCS811_RETRY_N 3
+#define CCS811_RETRY_BACKOFF_MS 5000u
+#define CCS811_ECO2_MIN 400u
+#define CCS811_ECO2_MAX 8192u
+#define CCS811_TVOC_MAX 1187u
+#define CCS811_ENV_T_MIN (-25.0f)
+#define CCS811_ENV_T_MAX 50.0f
+#define CCS811_ENV_RH_MIN 0.0f
+#define CCS811_ENV_RH_MAX 100.0f
+
+#if BENCH_MODE
+#define CCS811_STABLE_MS (2u * 60u * 1000u)
+#define MQ2_WARMUP_MS (2u * 60u * 1000u)
+#else
+#define CCS811_STABLE_MS (20u * 60u * 1000u)
+#define MQ2_WARMUP_MS (30u * 60u * 1000u)
+#endif
+
+#define MQ2_ADC_GPIO 1
+#define FLAME_ADC_GPIO 4
+#define FLAME_DO_GPIO 14
+#define FLAME_DO_ACTIVE_LEVEL 0
+#define FLAME_DEBOUNCE_MS 50
+
+#define ADC_SAMPLES 16
+#define ADC_DIV_RATIO 2.0f
+#define ADC_FAULT_LOW_MV 20
+#define ADC_FAULT_HIGH_MV 3050
+
+#define SENSOR_TASK_PERIOD_MS 1000u
+#define SENSOR_FAIL_RECOVER_N 3
+#define WARMUP_TICK_EVERY_LOOPS 60
+#define WARMUP_NVS_SAVE_EVERY 10
+#define MQ2_CAL_SAMPLES 60
+
+#define PREALERT_T_ON_C 45.0f
+#define PREALERT_DTDT_C_MIN 5.0f
+#define PREALERT_MQ2_REL_ON 0.5f
+#define PREALERT_ECO2_ON_PPM 1000.0f
+#define PREALERT_CLEAR_N 3
+
+#define NODE_TRIG_QUEUE_LEN 4
+#define ZB_TASK_STACK 8192
+#define ZB_TASK_PRIO 5
+#define ZB_RETRY_MIN_MS 5000u
+#define ZB_RETRY_MAX_MS 60000u
 
 #endif

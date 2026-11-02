@@ -245,6 +245,8 @@ factory,    app,  factory, ,        1500K
 | **T-006** | `firmware/gw_h2`, `firmware/node_h2`, `docs/API_NOTES.md` | **Spike G0:** coordinator (gw_h2) lập mạng kênh 25; ED (node_h2) join và gửi EP10–15 bằng **giá trị giả**; gw_h2 in giá trị nhận được ra console. Điền `API_NOTES.md` | 2 board H2 → log nhận report | T-001, T-002 | **Cổng G0 (GatewayPlan §10):** S1 build, S2 join ≤ 30 s, S3 nhận đủ 6 trường, S4 1000 report mất ≤ 1 %, S5 rút nguồn Node/GW rồi cấp lại → báo cáo lại ≤ 60 s. Log lưu `tests/results/g0_*.log`. **Trượt → dừng, kích hoạt phương án lùi (GatewayPlan §15)** |
 
 > **Chạy song song:** Phase 1 (cảm biến, breadboard) **không phụ thuộc** G0 và có thể làm cùng lúc với T-006. Phase 2 trở đi **phải chờ G0 đạt**.
+>
+> **Ghi chú V5 (T-003):** `ZB_TASK_STACK`/`ZB_TASK_PRIO` đang trùng giá trị ở `node_h2` và `gw_h2`; giữ cục bộ theo §5, có thể gom về `shared_config.h` khi cần.
 
 ### Phase 1 — Driver & lớp vật lý (breadboard + ứng dụng kiểm tra)
 
@@ -304,6 +306,8 @@ NODE (H2 SuperMini)                         GATEWAY
 | T-402 | `alarm_out` (task) | Spec §5.5.5d: task 50 ms, ghép LED + còi + lớp phủ MAINS_LOST, TWDT | `sys_state` → đầu ra | T-111, T-112, T-401 | **HIL:** dùng `gw_sim.py` ép từng trạng thái → LED/còi đúng bảng §8 GatewayPlan (đã sửa X2); độ trễ từ đổi trạng thái đến đổi đầu ra ≤ 100 ms |
 | T-403 | `alarm_out` (input) + `sys_state` | Spec §5.5.5c–e: ánh xạ nút (SHORT=mute 300 s/hủy mute, RESET=reset latch, JOIN=mở join), tín hiệu phản hồi, self-test khi giữ nút lúc boot | sự kiện nút → hành động | T-113, T-402 | **HIL:** FIRE → nhấn ngắn → còi tắt, LED vẫn nháy; sau 300 s còi kêu lại; giữ 3–5 s nhả → reset latch **chỉ** khi đủ điều kiện, nếu từ chối thì 3 chớp đỏ nhanh |
 | T-404 | `app_main` (host), TWDT, reset reason | Spec §5.5.9: thứ tự khởi động, đăng ký TWDT, bíp mã reset | — | T-402 | **HIL:** cố tình treo task `fusion` (lệnh debug `CONFIG_DEBUG_HANG`) → reset sau ≤ 10 s; sau boot còi bíp 3 lần; `status` có `reset_reason`; đầu ra không kích hoạt trong lúc reset |
+
+> **Ghi chú R4 (T-003):** Khi đọc `NODES_MAP` (T-206/T-404), bỏ qua mục sentinel có `ieee[0] == '\0'`; hiện bảng chỉ có sentinel `{"",""}`.
 
 ### Phase 5 — Cloud & dịch vụ
 | ID | Module / file | Mô tả cụ thể | Input → Output | Phụ thuộc | DoD |
@@ -975,14 +979,6 @@ NGOÀI PHẠM VI: CCS811, ADC, Zigbee, mọi thay đổi ở i2c_bus.
 ### 8.3 Lỗi hay gặp ở code ESP-IDF do LLM sinh (người duyệt soát nhanh)
 `driver/i2c.h` kiểu cũ (nên dùng driver I2C master mới) · gọi `vTaskDelay` trong ISR · `ESP_LOGI` trong ISR · `portMAX_DELAY` ở nơi cần timeout · quên `esp_zb_lock_acquire/release` · quên bảng phân vùng Zigbee · ngưỡng so sánh `float ==` · tràn số `uint32_t` khi trừ thời gian không ép kiểu · `xQueueSend` từ ISR thay vì `...FromISR` · stack task quá nhỏ cho TLS · đặt `esp_task_wdt_reset()` ngoài vòng lặp · quên `static`/`IRAM_ATTR` cho ISR · khởi tạo GPIO đầu ra **sau** NVS/WiFi.
 
-### 8.4 Việc cần bạn xác nhận trước khi giao cho agent
-| # | Câu hỏi | Mặc định tôi đã dùng |
-|---|---|---|
-| 1 | Thứ tự chân LED RGB: GPIO25=R, GPIO26=G, GPIO27=B? | Có (X2) |
-| 2 | Còi trần là **active** (chỉ bật/tắt) hay passive? Dòng còi bao nhiêu mA? | Active (X3); nếu >~30 mA đổi transistor |
-| 3 | Bạn dùng Windows hay Linux/macOS cho công cụ? | Có cả `build_all.sh` và `build_all.ps1` |
-| 4 | Bạn có mã nguồn dashboard/bot của đồ án tham chiếu để tái dùng (D5)? Định dạng `last_seen`? | Không có; dùng epoch giây |
-| 5 | Cho phép đổi D-12 (ESP-IDF cho cả 3 firmware) và cập nhật `GatewayPlan.md`, `GW_SCHEMATIC_SPEC.md` theo X1–X3? | Có |
-| 6 | Quỹ thời gian còn lại bao nhiêu tuần? | Chưa biết → chưa gán ngày |
 
-*Hết DEV_CODING_PLAN.md v0.1. Mọi thay đổi hợp đồng phải cập nhật `GatewayPlan.md` §2.4 trước, rồi mới sửa mã.*
+
+

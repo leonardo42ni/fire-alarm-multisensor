@@ -1,24 +1,33 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (nhánh `feat/T-002-skeleton` đã được gộp vào `master` tại `f357c23`)
-- **Task vừa hoàn thành:** `T-002` — Đã tạo cây thư mục, `.gitignore`, 3 project ESP-IDF khung (`node_h2`, `gw_h2`, `gw_host`), `docs/API_NOTES.md`, `docs/ENV.md`, `docs/pinmap_verified.md` và `tools/build_all.ps1`.
-  - **Phạm vi app_main:** mỗi project chỉ in 3 dòng: tên firmware, `FW_VERSION`, `esp_reset_reason()`. Không có code cảm biến/Zigbee/Fusion và không khởi tạo đầu ra.
-  - **Trạng thái nghiệm thu:** Đã chạy lại `tools/build_all.ps1` ngày 2026-11-01 với ESP-IDF **v5.5.5** → `[PASS] node_h2`, `[PASS] gw_h2`, `[PASS] gw_host`, `[PASS] Ca 3 firmware build thanh cong.` (exit 0). `secrets.h` không bị track và đã được `.gitignore`.
-  - **Môi trường:** ESP-IDF v5.5.5 tại `E:\Espressif\frameworks\esp-idf-v5.5.5`, venv Python `idf5.5_py3.11_env`. Trước khi build phải: (1) đưa `...\idf5.5_py3.11_env\Scripts` rồi `E:\Espressif\tools\idf-python\3.11.2` lên đầu `PATH` để `python` có `click`; (2) `Remove-Item Env:IDF_TARGET` vì shell hiện có sẵn `IDF_TARGET=esp32`; rồi mới `. export.ps1`.
-  - **Dọn dẹp:** Đã xóa `build/` cũ (được cấu hình cho `X:\firmware\...`) rồi build lại từ đầu.
-  - **Quyết định của người dùng:** giữ `EXTRA_COMPONENT_DIRS` dạng tương đối `"../common"`, `"../lib_fusion"`; thêm `.clangd`, `.devcontainer/`, `CMakePresets.json` vào `.gitignore`; cập nhật `docs/ENV.md` sang v5.5.5; commit T-002.
-  - **Sửa theo review:** Đã áp dụng R1–R5 (đánh dấu `[VERIFY T-006]` cho Kconfig Zigbee, bổ sung `ESP_LOGI` vào `API_NOTES.md`, ghi chú stub T-003, đồng bộ README/ENV, bọc `Pop-Location` trong `finally`) — commit `f357c23`.
-  - **Gia cố môi trường build (2026-11-01):** `tools/build_all.ps1` tự ưu tiên venv Python và tự bỏ `IDF_TARGET` toàn cục; `docs/ENV.md` cập nhật đúng thứ tự `PATH` và bước xóa `IDF_TARGET`.
+- **Nhánh Git:** `master` (T-003 đã sửa theo review V1–V9, chưa commit)
+- **Task vừa hoàn thành:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
+  - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
+  - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
+  - **Sửa theo `review.md` (V1–V9):**
+    - V1/V8: `NODES_MAP`/`NODES_MAP_LEN` chỉ còn `extern` trong `config.h`; định nghĩa duy nhất trong `nodes_map.c`; `main/CMakeLists.txt` thêm `nodes_map.c`.
+    - V2: `config.h` kiểm tra đủ 7 macro `WIFI_SSID`, `WIFI_PASS`, `MQTT_HOST`, `MQTT_PORT`, `MQTT_USER`, `MQTT_PASS`, `MQTT_CLIENT_ID`; thiếu macro nào báo `#error` đúng tên.
+    - V3/V9: thêm `RELEASE_BUILD` (mặc định 0) và `#error "BENCH_MODE phai la 0 trong build release"` khi `BENCH_MODE && RELEASE_BUILD`. Hiện chưa có cờ build nào đặt `RELEASE_BUILD=1`; khi làm release phải đặt qua `-DRELEASE_BUILD=1` hoặc sdkconfig.
+    - V4: bọc `#ifndef` cho `ZB_CHANNEL`, `ZB_PAN_ID`, `COORD_EP`, `UART_BAUD`, `REPORT_NORMAL_MS`, `REPORT_PREALERT_MS`, `HB_INTERVAL_MS`, `HB_TIMEOUT_MS`; `EP_*` và `COALESCE_MS` giữ bất biến.
+    - V5: đã ghi chú vào `docs/DEV_CODING_PLAN.md` (ZB_TASK_STACK/ZB_TASK_PRIO trùng ở node_h2/gw_h2, giữ cục bộ).
+    - V6: đã ghi `app_err_t` là kiểu nội bộ, không alias `esp_err_t` vào `docs/API_NOTES.md`.
+    - V7: `FW_VERSION` ghép từ `FW_VERSION_MAJOR/MINOR/PATCH` bằng macro stringify.
+  - **Trạng thái nghiệm thu:** `tools/build_all.ps1` với `secrets.h` (copy từ `secrets.example.h`) → `[PASS] node_h2`, `[PASS] gw_h2`, `[PASS] gw_host`, `[PASS] Ca 3 firmware build thanh cong.`; không có cảnh báo `unused-const-variable`. Xóa `secrets.h` → `gw_host` dừng với `#error "Thieu main/secrets.h: sao chep tu secrets.example.h va dien thong tin"` (exit 2). `secrets.h` thiếu `WIFI_SSID` → dừng với `#error "Thieu WIFI_SSID trong secrets.h"` (exit 2). Đã khôi phục `secrets.h` đầy đủ.
+  - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) để T-201.
+  - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` vẫn chờ T-006 xác nhận.
 - **Task tiếp theo cần làm:**
-  - `T-003`: Tạo/hoàn thiện `config.h` (×3), `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; thêm `#error` khi thiếu `secrets.h` cho `gw_host`.
   - `T-004`: Thiết lập `tests/host/CMakeLists.txt` và `test_util.h` để chạy `ctest` trên PC.
+  - `T-005`: Viết `tools/serial_check.py` (lọc `BU|...`, timeout, `--selftest`).
+  - `T-006`: Spike G0 — coordinator/ED Zigbee, join, gửi EP10–15 bằng giá trị giả, điền `API_NOTES.md`.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
   - `esp_reset_reason()` và macro `ESP_LOGI` đã được đối chiếu chữ ký trên bản cài thật v5.5.5 và ghi vào `docs/API_NOTES.md`.
   - `sdkconfig.defaults` và `partitions.csv` copy nguyên văn từ `docs/DEV_CODING_PLAN.md` §3. Kích thước `zb_storage`/`zb_fct` vẫn mang dấu `[VERIFY]` của kế hoạch, sẽ kiểm tra ở T-006 khi thêm Zigbee.
   - Các symbol `CONFIG_ZB_*` trong `sdkconfig.defaults` chưa được kiểm chứng; T-006 phải xác nhận bằng `idf.py menuconfig`/grep Kconfig của `esp-zigbee-lib`.
-  - Các file `error.h`, `shared_config.h`, `secrets.example.h` là stub tạm từ T-002; Task T-003 sẽ hoàn thiện nội dung chi tiết.
+  - Header T-003: `shared_config.h` giữ hằng số dùng chung (kênh/PAN/EP, report, HB, UART); `node_h2/config.h` giữ I2C/SHT31/CCS811/ADC/flame/prealert; `gw_h2/config.h` giữ UART/cache/join; `gw_host/config.h` giữ RGB/còi/nút/PWR/MQTT/`NODES_MAP`.
+  - `BENCH_MODE=1` rút `CCS811_STABLE_MS` và `MQ2_WARMUP_MS` còn 2 phút; mặc định 20 phút và 30 phút. `RELEASE_BUILD` mặc định 0; release build phải đặt `-DRELEASE_BUILD=1` để chặn `BENCH_MODE=1`.
+  - `NODES_MAP[]` hiện chỉ có sentinel `{"",""}`; định nghĩa duy nhất ở `gw_host/main/nodes_map.c`; điền IEEE thật khi có board.
   - Shell hiện có sẵn `IDF_TARGET=esp32`; nếu không xóa biến này, build `node_h2`/`gw_h2` báo lỗi "sdkconfig was generated for target 'esp32h2', but IDF_TARGET is set to 'esp32'".
   - Cây thư mục rỗng theo §2 đã được tạo (components/, bringup/, cloud/, tests/host, tests/vectors); các thư mục rỗng không được Git theo dõi.
-  - Việc tắt đầu ra (còi/LED) theo §1.3 sẽ làm ở task `alarm_out`/`buzzer` (T-112), không nằm trong T-002.
+  - Việc tắt đầu ra (còi/LED) theo §1.3 sẽ làm ở task `alarm_out`/`buzzer` (T-112), không nằm trong T-002/T-003.

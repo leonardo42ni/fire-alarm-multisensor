@@ -1,5 +1,5 @@
 idf_component_register(
-    SRCS "app_main.c"
+    SRCS "nodes_map.c" "app_main.c"
     INCLUDE_DIRS "."
     REQUIRES common esp_system log
 )
