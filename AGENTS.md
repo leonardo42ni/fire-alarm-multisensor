@@ -22,3 +22,4 @@ Khi bắt đầu phiên chat mới hoặc khi người dùng yêu cầu làm ti�
 7. Không báo "xong" nếu chưa chạy lệnh build / `ctest` nghiệm thu và dán đầu ra thật[cite: 2]. Nếu task cần phần cứng (HIL) mà chưa cắm mạch → ghi rõ "Đã pass build/CTest, chờ người dùng kiểm HIL"[cite: 2].
 8. Đầu ra (`buzzer_init()`, `rgb_init()`) phải đưa về mức TẮT ở ngay dòng đầu tiên của `app_main` trước cả NVS/WiFi[cite: 2].
 9. Sau khi hoàn thành hoặc sửa xong 1 Task: Cập nhật ngay file `STATE.md` và nhắc người dùng chạy `.\export_diff.ps1` để kiểm duyệt.
+10. Khi không chắc về pin/thanh ghi/API: hỏi, không đoán.
