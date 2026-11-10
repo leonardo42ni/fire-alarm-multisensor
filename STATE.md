@@ -1,8 +1,22 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`)
-- **Task vừa hoàn thành:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
+- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`; T-004 đã pass CTest, chưa commit)
+- **Task vừa hoàn thành:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
+  - **File:** `tests/host/test_util.h`, `tests/host/CMakeLists.txt`, `tests/host/test_sanity.c`.
+  - **Framework:** C11 thuần, header-only; macro `TEST_ASSERT`, `TEST_ASSERT_EQUAL_INT`, `TEST_ASSERT_FLOAT_WITHIN`, `TEST_ASSERT_STR_EQUAL`; đếm test case (`run/passed/failed`) và `test_summary()` trả 0/1.
+  - **CTest:** target `test_sanity`, test name `SanityCheck`; include `tests/host`, `firmware/common`, `firmware/lib_fusion/include`; option `ENABLE_SANITIZERS` (mặc định OFF) thêm `-fsanitize=address,undefined` khi bật; artifact/log nằm trong `build_host/` (đã git-ignore).
+  - **Test case:** `version_string` (`FW_VERSION == "0.1.0"`), `error_enum` (`APP_OK`/`APP_ERR_*`), `float_within`.
+  - **Lệnh chạy (PowerShell):** `$env:PATH = "E:\Espressif\tools\cmake\3.30.2\bin;E:\Espressif\tools\ninja\1.12.1;C:\msys64\ucrt64\bin;" + $env:PATH`; `$env:CMAKE_GENERATOR = "Ninja"`; `cmake -S tests/host -B build_host`; `cmake --build build_host`; `ctest --test-dir build_host --output-on-failure`.
+  - **Kết quả:** `100% tests passed, 0 tests failed out of 1`; executable in `[PASS] version_string / error_enum / float_within`, `[SUMMARY] run=3 passed=3 failed=0`, exit 0.
+  - **Negative check:** tạm đổi expected `FW_VERSION` thành `9.9.9` → CTest `***Failed`, exit 8, `[SUMMARY] run=3 passed=2 failed=1`; đã khôi phục và chạy lại pass.
+  - **Lưu ý:** `firmware/common/error.h` hiện dùng `APP_OK`, không có `FIRE_OK`; test kiểm tra `APP_OK == 0` và các `APP_ERR_*`. Nếu hợp đồng yêu cầu tên `FIRE_OK`, cần task đổi tên riêng.
+  - **Môi trường:** CMake 3.30.2 + Ninja 1.12.1 (Espressif tools), GCC 14.2.0 MSYS2 UCRT64; CMake mặc định NMake nên phải đặt `CMAKE_GENERATOR=Ninja` hoặc `-G Ninja`.
+  - **R2/ASAN:** `docs/DEV_CODING_PLAN.md` §4, DoD T-004 chỉ yêu cầu `cmake -S tests/host -B build_host`, `cmake --build build_host`, `ctest` → 100% pass và cố tình làm test sai → ctest fail; **không có ASAN/UBSAN trong DoD T-004**. §6.1 là lệnh PC chung có sanitizer. Đã thêm `ENABLE_SANITIZERS` (mặc định OFF); bật ON cấu hình OK nhưng link fail: `cannot find -lasan`, `cannot find -lubsan` (GCC 14.2.0 MSYS2 UCRT64). Đã xóa `build_host/sanitize`; chưa có clang/LLVM để thử. Sanitizer là điều kiện môi trường/task sau; T-004 đạt DoD §4 (build/CTest).
+  - **Sửa theo `review.md` (T-004):** R1 căn lại T-005 đúng `DEV_CODING_PLAN.md` §4; R2 xác nhận DoD T-004 không yêu cầu sanitizer và thêm hook `ENABLE_SANITIZERS`; R3 thêm guard `TEST_UTIL_UNUSED`; R4 bỏ alias `ASSERT_*`; R5 đổi tiền tố biến trong macro thành `_tu_*`; R6 bỏ assert thừa `FW_VERSION[0]`; R7 không commit `review.md` cùng T-004.
+  - **R3 check:** file tạm chỉ include `test_util.h` (không dùng `test_run`/`test_summary`) biên dịch `gcc -std=c11 -Wall -Wextra -Werror` → exit 0; đã xóa file tạm.
+  - **Lệch plan:** §4 T-004 liệt kê alias `ASSERT_TRUE/EQ_INT/NEAR`; đã bỏ theo review R4. Khi T-201/T-301 cần, dùng `TEST_ASSERT*` hoặc thêm alias có caller thật.
+- **Task trước:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
   - **Sửa theo `review.md` (V1–V9):**
@@ -17,8 +31,7 @@
   - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) để T-201.
   - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` vẫn chờ T-006 xác nhận.
 - **Task tiếp theo cần làm:**
-  - `T-004`: Thiết lập `tests/host/CMakeLists.txt` và `test_util.h` để chạy `ctest` trên PC.
-  - `T-005`: Viết `tools/serial_check.py` (lọc `BU|...`, timeout, `--selftest`).
+  - `T-005`: Viết `tools/serial_check.py` (đọc serial, lọc `BU|...`, timeout, `--selftest`) — khớp `docs/DEV_CODING_PLAN.md` §4.
   - `T-006`: Spike G0 — coordinator/ED Zigbee, join, gửi EP10–15 bằng giá trị giả, điền `API_NOTES.md`.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
@@ -31,3 +44,5 @@
   - Shell hiện có sẵn `IDF_TARGET=esp32`; nếu không xóa biến này, build `node_h2`/`gw_h2` báo lỗi "sdkconfig was generated for target 'esp32h2', but IDF_TARGET is set to 'esp32'".
   - Cây thư mục rỗng theo §2 đã được tạo (components/, bringup/, cloud/, tests/host, tests/vectors); các thư mục rỗng không được Git theo dõi.
   - Việc tắt đầu ra (còi/LED) theo §1.3 sẽ làm ở task `alarm_out`/`buzzer` (T-112), không nằm trong T-002/T-003.
+  - Host test: CMake 3.30.2 + Ninja 1.12.1 lấy từ `E:\Espressif\tools`; GCC 14.2.0 MSYS2 UCRT64 tại `C:\msys64\ucrt64\bin`. CMake mặc định chọn NMake nên phải đặt `CMAKE_GENERATOR=Ninja` (hoặc `-G Ninja`).
+  - `tests/host/test_util.h` là header-only, bộ đếm `static` có `TEST_UTIL_UNUSED`; macro assert `return 1` khi fail nên hàm test phải trả `int` và được gọi qua `test_run(name, fn)`. Quy ước mỗi executable chỉ có một file test include header này. Đã bỏ alias `ASSERT_*`, macro dùng tiền tố `_tu_*`; không còn assert thừa `FW_VERSION[0]`.
