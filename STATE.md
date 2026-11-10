@@ -1,7 +1,7 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`, đã merge; T-005 trên `feat/T-005`, chưa commit)
+- **Nhánh Git:** `master` (T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9`)
 - **Task vừa hoàn thành:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
   - **File:** `tools/serial_check.py`, `tests/vectors/serial_sample.log`.
   - **Chức năng:** đọc serial qua `pyserial` hoặc `--input` log; lọc dòng `BU|...`; `--expect`/`--forbid` lặp lại; `--timeout`, `--baud`, `--log`; exit 0/1; lỗi CLI/tool exit 2.
