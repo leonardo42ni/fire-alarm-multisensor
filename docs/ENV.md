@@ -6,9 +6,12 @@
 |---|---|---|
 | ESP-IDF | 5.5.5 | Đã cài tại `E:\Espressif\frameworks\esp-idf-v5.5.5`; `idf.py --version` báo `ESP-IDF v5.5.5` |
 | Python | 3.11.2 (venv `idf5.5_py3.11_env`) | Đã xác minh; PATH mặc định đang có Python 3.15 của Windows Store (xem lưu ý bên dưới) |
+| pyserial | 3.5 | Đã cài trong venv ESP-IDF Python 3.11.2; Python 3.15 mặc định chưa cài |
 | CMake | IDF bundled | Đã dùng để build thành công cả 3 firmware |
 | Ninja | IDF bundled | Đã dùng để build thành công cả 3 firmware |
 | Node.js | 20 LTS | Chưa xác minh (chưa cần cho T-002) |
+
+> **pyserial:** dùng Python của venv ESP-IDF để chạy `tools/serial_check.py --port ...`; nếu dùng Python 3.15 mặc định, cài thêm `python -m pip install "pyserial>=3.5"`.
 
 ## Cài ESP-IDF 5.5.x trên Windows (PowerShell)
 

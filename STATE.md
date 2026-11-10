@@ -1,8 +1,16 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`; T-004 đã commit tại `20e2dce` trên `feat/T-004`)
-- **Task vừa hoàn thành:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
+- **Nhánh Git:** `master` (T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`, đã merge; T-005 trên `feat/T-005`, chưa commit)
+- **Task vừa hoàn thành:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
+  - **File:** `tools/serial_check.py`, `tests/vectors/serial_sample.log`.
+  - **Chức năng:** đọc serial qua `pyserial` hoặc `--input` log; lọc dòng `BU|...`; `--expect`/`--forbid` lặp lại; `--timeout`, `--baud`, `--log`; exit 0/1; lỗi CLI/tool exit 2.
+  - **Selftest:** `python tools/serial_check.py --selftest` → 7 case OK, `SELFTEST PASS`, exit 0.
+  - **DoD:** `python tools/serial_check.py --input tests/vectors/serial_sample.log --expect "BU\|SHT31\|.*\|PASS" --timeout 20` → `[EXPECT] ... MATCHED`, `[PASS]`, exit 0; expect không khớp → exit 1; `--forbid` khớp → exit 1.
+  - **Lưu ý:** `pyserial 3.5` đã cài trong venv ESP-IDF Python 3.11.2; Python 3.15 mặc định chưa cài. Dùng Python venv khi chạy serial thật; đã ghi vào `docs/ENV.md`. `--input` là tiện ích cho log, không thay serial thật.
+  - **Review T-005 (E1–E6):** E1 chỉ dừng sớm khi `--forbid` rỗng; E2 ghi rõ `--forbid` đơn lẻ chạy hết timeout; E3 ghi rõ `--timeout` chỉ áp dụng cho `--port`; E4 log ghi đủ cửa sổ khi có `--forbid`; E5 mất kết nối COM được bắt qua `OSError` → exit 2; E6 nhánh serial chưa kiểm chứng với cổng thật, xác nhận ở T-006. Selftest thêm ca `forbid_after_match`.
+  - **Verify lần cuối:** selftest exit 0; expect exit 0; forbid exit 1; thiếu `--expect`/`--forbid` exit 2.
+- **Task trước:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
   - **File:** `tests/host/test_util.h`, `tests/host/CMakeLists.txt`, `tests/host/test_sanity.c`.
   - **Framework:** C11 thuần, header-only; macro `TEST_ASSERT`, `TEST_ASSERT_EQUAL_INT`, `TEST_ASSERT_FLOAT_WITHIN`, `TEST_ASSERT_STR_EQUAL`; đếm test case (`run/passed/failed`) và `test_summary()` trả 0/1.
   - **CTest:** target `test_sanity`, test name `SanityCheck`; include `tests/host`, `firmware/common`, `firmware/lib_fusion/include`; option `ENABLE_SANITIZERS` (mặc định OFF) thêm `-fsanitize=address,undefined` khi bật; artifact/log nằm trong `build_host/` (đã git-ignore).
@@ -17,7 +25,7 @@
   - **R3 check:** file tạm chỉ include `test_util.h` (không dùng `test_run`/`test_summary`) biên dịch `gcc -std=c11 -Wall -Wextra -Werror` → exit 0; đã xóa file tạm.
   - **Lệch plan:** §4 T-004 liệt kê alias `ASSERT_TRUE/EQ_INT/NEAR`; đã bỏ theo review R4. Khi T-201/T-301 cần, dùng `TEST_ASSERT*` hoặc thêm alias có caller thật.
   - **Review T-004 (N1–N3):** N1 giữ `%lld` vì host test dùng UCRT; N2 cập nhật test khi bump `FW_VERSION`; N3 lệnh PATH tuyệt đối chỉ đúng máy hiện tại. Cả 3 không chặn commit.
-- **Task trước:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
+- **Task trước nữa:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
   - **Sửa theo `review.md` (V1–V9):**
@@ -32,7 +40,6 @@
   - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) để T-201.
   - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` vẫn chờ T-006 xác nhận.
 - **Task tiếp theo cần làm:**
-  - `T-005`: Viết `tools/serial_check.py` (đọc serial, lọc `BU|...`, timeout, `--selftest`) — khớp `docs/DEV_CODING_PLAN.md` §4.
   - `T-006`: Spike G0 — coordinator/ED Zigbee, join, gửi EP10–15 bằng giá trị giả, điền `API_NOTES.md`.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
@@ -47,3 +54,4 @@
   - Việc tắt đầu ra (còi/LED) theo §1.3 sẽ làm ở task `alarm_out`/`buzzer` (T-112), không nằm trong T-002/T-003.
   - Host test: CMake 3.30.2 + Ninja 1.12.1 lấy từ `E:\Espressif\tools`; GCC 14.2.0 MSYS2 UCRT64 tại `C:\msys64\ucrt64\bin`. CMake mặc định chọn NMake nên phải đặt `CMAKE_GENERATOR=Ninja` (hoặc `-G Ninja`).
   - `tests/host/test_util.h` là header-only, bộ đếm `static` có `TEST_UTIL_UNUSED`; macro assert `return 1` khi fail nên hàm test phải trả `int` và được gọi qua `test_run(name, fn)`. Quy ước mỗi executable chỉ có một file test include header này. Đã bỏ alias `ASSERT_*`, macro dùng tiền tố `_tu_*`; không còn assert thừa `FW_VERSION[0]`.
+  - T-005: Đã sửa lỗ hổng E1 (chỉ dừng sớm khi không có `--forbid`). Tham số `--timeout` chỉ áp dụng cho chế độ `--port`. E6: nhánh đọc serial vật lý chưa kiểm chứng, sẽ xác nhận trực tiếp tại HIL/G0/T-006; `pyserial 3.5` đã cài trong venv IDF Python 3.11.2 và ghi trong `docs/ENV.md`.

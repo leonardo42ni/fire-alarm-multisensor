@@ -1,0 +1,8 @@
+boot: fire-alarm node
+I (123) SNS: i2c init
+BU|I2C|found=0x44,0x5A|PASS
+BU|SHT31|T=24.5|RH=55.0|PASS
+BU|CCS811|eco2=400|tvoc=10|stable=1|PASS
+BU|FLAME|events=1|PASS
+BU|PWR|mv_pin=2048|v_adp=5.01|mains=1|PASS
+BU|NODE|T=24.5|RH=55.0|eco2=400|tvoc=10|mq2=1234|flame=1|flags=0x00
