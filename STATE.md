@@ -1,7 +1,7 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
 - **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`; T-004 đã pass CTest, chưa commit)
+- **Nhánh Git:** `master` (T-003 đã commit tại `1670f85`; T-004 đã commit tại `20e2dce` trên `feat/T-004`)
 - **Task vừa hoàn thành:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
   - **File:** `tests/host/test_util.h`, `tests/host/CMakeLists.txt`, `tests/host/test_sanity.c`.
   - **Framework:** C11 thuần, header-only; macro `TEST_ASSERT`, `TEST_ASSERT_EQUAL_INT`, `TEST_ASSERT_FLOAT_WITHIN`, `TEST_ASSERT_STR_EQUAL`; đếm test case (`run/passed/failed`) và `test_summary()` trả 0/1.
@@ -16,6 +16,7 @@
   - **Sửa theo `review.md` (T-004):** R1 căn lại T-005 đúng `DEV_CODING_PLAN.md` §4; R2 xác nhận DoD T-004 không yêu cầu sanitizer và thêm hook `ENABLE_SANITIZERS`; R3 thêm guard `TEST_UTIL_UNUSED`; R4 bỏ alias `ASSERT_*`; R5 đổi tiền tố biến trong macro thành `_tu_*`; R6 bỏ assert thừa `FW_VERSION[0]`; R7 không commit `review.md` cùng T-004.
   - **R3 check:** file tạm chỉ include `test_util.h` (không dùng `test_run`/`test_summary`) biên dịch `gcc -std=c11 -Wall -Wextra -Werror` → exit 0; đã xóa file tạm.
   - **Lệch plan:** §4 T-004 liệt kê alias `ASSERT_TRUE/EQ_INT/NEAR`; đã bỏ theo review R4. Khi T-201/T-301 cần, dùng `TEST_ASSERT*` hoặc thêm alias có caller thật.
+  - **Review T-004 (N1–N3):** N1 giữ `%lld` vì host test dùng UCRT; N2 cập nhật test khi bump `FW_VERSION`; N3 lệnh PATH tuyệt đối chỉ đúng máy hiện tại. Cả 3 không chặn commit.
 - **Task trước:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
