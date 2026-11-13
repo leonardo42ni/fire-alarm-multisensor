@@ -1,0 +1,409 @@
+ESP-ROM:esp32h2-20221101
+Build:Nov  1 2022
+rst:0x15 (USB_UART_HPSYS),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40000fde
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x408460f0,len:0x16e0
+load:0x4083c2d0,len:0xe70
+load:0x4083efd0,len:0x2fd0
+entry 0x4083c2da
+I (23) boot: ESP-IDF v5.5.5 2nd stage bootloader
+I (23) boot: compile time Oct 27 2026 11:48:04
+I (24) boot: chip revision: v0.1
+I (24) boot: efuse block revision: v0.3
+I (24) boot.esp32h2: SPI Speed      : 64MHz
+I (25) boot.esp32h2: SPI Mode       : DIO
+I (25) boot.esp32h2: SPI Flash Size : 2MB
+I (25) boot: Enabling RNG early entropy source...
+I (26) boot: Partition Table:
+I (26) boot: ## Label            Usage          Type ST Offset   Length
+I (27) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (27) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (28) boot:  2 zb_storage       Unknown data     01 81 00010000 00004000
+I (29) boot:  3 zb_fct           Unknown data     01 81 00014000 00000400
+I (29) boot:  4 factory          factory app      00 00 00020000 00177000
+I (30) boot: End of partition table
+I (31) esp_image: segment 0: paddr=00020020 vaddr=42078020 size=0da98h ( 55960) map
+I (46) esp_image: segment 1: paddr=0002dac0 vaddr=40800000 size=02558h (  9560) load
+I (50) esp_image: segment 2: paddr=00030020 vaddr=42000020 size=72510h (468240) map
+I (169) esp_image: segment 3: paddr=000a2538 vaddr=40802558 size=0b6cch ( 46796) load
+I (183) esp_image: segment 4: paddr=000adc0c vaddr=4080dc30 size=02554h (  9556) load
+I (191) boot: Loaded app from partition at offset 0x20000
+I (191) boot: Disabling RNG early entropy source...
+I (193) cpu_start: Unicore app
+I (202) cpu_start: Pro cpu start user code
+I (202) cpu_start: cpu freq: 96000000 Hz
+I (202) app_init: Application information:
+I (202) app_init: Project name:     gw_h2
+I (203) app_init: App version:      0810573-dirty
+I (203) app_init: Compile time:     Nov 11 2026 15:20:58
+I (203) app_init: ELF file SHA256:  8e5c54f3b...
+I (204) app_init: ESP-IDF:          v5.5.5
+I (204) efuse_init: Min chip rev:     v0.0
+I (204) efuse_init: Max chip rev:     v1.99 
+I (205) efuse_init: Chip rev:         v0.1
+I (205) heap_init: Initializing. RAM available for dynamic allocation:
+I (206) heap_init: At 408151B0 len 000381D0 (224 KiB): RAM
+I (206) heap_init: At 4084D380 len 00002B60 (10 KiB): RAM
+I (206) heap_init: At 50000000 len 00000FE8 (3 KiB): RTCRAM
+I (208) spi_flash: detected chip: gd
+I (208) spi_flash: flash io: dio
+W (208) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (210) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (210) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (212) main_task: Started on CPU0
+I (213) main_task: Calling app_main()
+I (213) ZB: firmware=gw_h2
+I (213) ZB: version=0.1.0
+I (213) ZB: reset_reason=11
+I (235) phy: phy_version: 324,2, 0d8cd71, Apr 10 2026, 13:58:46
+I (236) phy: libbtbb version: 8db04ea, Apr 10 2026, 13:58:59
+I (239) main_task: Returned from app_main()
+I (482) ZB: BU|ZB_COORD|PERMIT|0
+I (484) ZB: BU|ZB_COORD|FORMED|PAN=0x1a62|CH=25|SA=0x0000|PASS
+I (953) ZB: BU|ZB_COORD|PERMIT|180
+I (8063) ZB: BU|ZB_COORD|JOIN|SA=0x53f1|PASS
+I (8166) ZB: BU|ZB_COORD|PERMIT|180
+I (8225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (8233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (8241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (8298) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (8306) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (8316) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (8323) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (8329) ZB: BU|ZB_SEQ|seq=1|PASS
+I (8330) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=1.00|PASS
+I (11225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (11233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (11240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (11248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (11251) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (11259) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (11262) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (11268) ZB: BU|ZB_SEQ|seq=2|PASS
+I (11269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=2.00|PASS
+I (14225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (14233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (14240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (14246) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (14276) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (14282) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (14288) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (14294) ZB: BU|ZB_SEQ|seq=3|PASS
+I (14295) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=3.00|PASS
+I (17226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (17237) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (17244) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (17253) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (17256) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (17264) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (17267) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (17273) ZB: BU|ZB_SEQ|seq=4|PASS
+I (17273) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=4.00|PASS
+I (20227) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (20235) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (20247) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (20257) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (20265) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (20313) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (20321) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (20338) ZB: BU|ZB_SEQ|seq=5|PASS
+I (20339) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=5.00|PASS
+I (23226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (23233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (23242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (23279) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (23290) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (23297) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (23303) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (23309) ZB: BU|ZB_SEQ|seq=6|PASS
+I (23310) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=6.00|PASS
+I (26226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (26234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (26241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (26249) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (26252) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (26260) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (26263) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (26269) ZB: BU|ZB_SEQ|seq=7|PASS
+I (26270) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=7.00|PASS
+I (29225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (29233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (29240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (29247) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (29253) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (29260) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (29268) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (29271) ZB: BU|ZB_SEQ|seq=8|PASS
+I (29271) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=8.00|PASS
+I (32225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (32233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (32240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (32248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (32251) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (32259) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (32262) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (32268) ZB: BU|ZB_SEQ|seq=9|PASS
+I (32269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=9.00|PASS
+I (35225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (35233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (35242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (35252) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (35261) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (35275) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (35282) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (35296) ZB: BU|ZB_SEQ|seq=10|PASS
+I (35296) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=10.00|PASS
+I (38225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (38233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (38240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (38246) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (38253) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (38259) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (38267) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (38270) ZB: BU|ZB_SEQ|seq=11|PASS
+I (38270) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=11.00|PASS
+I (41227) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (41234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (41241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (41250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (41293) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (41301) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (41310) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (41326) ZB: BU|ZB_SEQ|seq=12|PASS
+I (41326) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=12.00|PASS
+I (44225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (44233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (44240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (44260) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (44267) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (44275) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (44281) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (44288) ZB: BU|ZB_SEQ|seq=13|PASS
+I (44289) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=13.00|PASS
+I (47226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (47237) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (47244) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (47250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (47257) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (47263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (47269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (47275) ZB: BU|ZB_SEQ|seq=14|PASS
+I (47276) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=14.00|PASS
+I (50226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (50234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (50244) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (50269) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (50277) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (50291) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (50307) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (50316) ZB: BU|ZB_SEQ|seq=15|PASS
+I (50316) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=15.00|PASS
+I (53226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (53234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (53240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (53249) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (53271) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (53281) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (53288) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (53294) ZB: BU|ZB_SEQ|seq=16|PASS
+I (53294) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=16.00|PASS
+I (56226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (56234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (56255) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (56264) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (56271) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (56277) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (56283) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (56289) ZB: BU|ZB_SEQ|seq=17|PASS
+I (56290) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=17.00|PASS
+I (59226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (59234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (59242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (59251) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (59257) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (59263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (59271) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (59274) ZB: BU|ZB_SEQ|seq=18|PASS
+I (59275) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=18.00|PASS
+I (62226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (62234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (62242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (62261) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (62267) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (62323) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (62331) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (62338) ZB: BU|ZB_SEQ|seq=19|PASS
+I (62339) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=19.00|PASS
+I (65226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (65234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (65243) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (65250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (65256) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (65263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (65269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (65275) ZB: BU|ZB_SEQ|seq=20|PASS
+I (65276) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=20.00|PASS
+I (68225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (68233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (68242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (68249) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (68255) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (68261) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (68268) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (68274) ZB: BU|ZB_SEQ|seq=21|PASS
+I (68274) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=21.00|PASS
+I (71225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (71233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (71242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (71285) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (71293) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (71331) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (71339) ZB: BU|ZB_SEQ|seq=22|PASS
+I (71339) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=22.00|PASS
+I (74226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (74234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (74243) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (74251) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (74259) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (74267) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (74281) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (74288) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (74294) ZB: BU|ZB_SEQ|seq=23|PASS
+I (74294) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=23.00|PASS
+I (77226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (77234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (77242) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (77252) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (77255) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (77263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (77273) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (77279) ZB: BU|ZB_SEQ|seq=24|PASS
+I (77280) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=24.00|PASS
+I (80226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (80234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (80240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (80247) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (80267) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (80273) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (80279) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (80289) ZB: BU|ZB_SEQ|seq=25|PASS
+I (80290) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=25.00|PASS
+I (83226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (83238) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (83244) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (83253) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (83256) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (83264) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (83267) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (83273) ZB: BU|ZB_SEQ|seq=26|PASS
+I (83273) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=26.00|PASS
+I (86226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (86234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (86240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (86251) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (86257) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (86265) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (86274) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (89226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (89238) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (89249) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (89256) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (89263) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (89273) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (89279) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (89287) ZB: BU|ZB_SEQ|seq=27|PASS
+I (89288) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=27.00|PASS
+I (92227) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (92234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (92241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (92249) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (92256) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (92264) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (92267) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (92275) ZB: BU|ZB_SEQ|seq=29|PASS
+I (92275) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=29.00|PASS
+I (92280) ZB: BU|ZB_SEQ|seq=28|PASS
+I (92280) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=28.00|PASS
+I (95226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (95234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (95240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (95248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (95255) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (95263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (95266) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (95276) ZB: BU|ZB_SEQ|seq=30|PASS
+I (95277) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=30.00|PASS
+I (98226) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (98234) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (98243) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (98250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (98259) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (98266) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (98272) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (98278) ZB: BU|ZB_SEQ|seq=31|PASS
+I (98279) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=31.00|PASS
+I (101225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (101233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (101240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (101250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (101256) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (101263) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (101269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (101276) ZB: BU|ZB_SEQ|seq=32|PASS
+I (101276) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=32.00|PASS
+I (104225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (104233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (104241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (104250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (104286) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (104294) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (104304) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (104310) ZB: BU|ZB_SEQ|seq=33|PASS
+I (104311) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=33.00|PASS
+I (107225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (107233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (107241) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (107250) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (107259) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (107268) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (107274) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (107282) ZB: BU|ZB_SEQ|seq=34|PASS
+I (107283) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=34.00|PASS
+I (110225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (110233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (110240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (110248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (110251) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (110260) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (110262) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (110269) ZB: BU|ZB_SEQ|seq=35|PASS
+I (110269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=35.00|PASS
+I (113225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (113233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (113240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (113249) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (113300) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (113308) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (113322) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (113330) ZB: BU|ZB_SEQ|seq=36|PASS
+I (113331) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=36.00|PASS
+I (116225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (116233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (116240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (116248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (116251) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (116259) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (116262) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (116268) ZB: BU|ZB_SEQ|seq=37|PASS
+I (116269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=37.00|PASS
+I (119225) ZB: BU|ZB_RECV|ep=10|cl=0x0402|attr=0x0000|val=25.50|PASS
+I (119233) ZB: BU|ZB_RECV|ep=10|cl=0x0405|attr=0x0000|val=60.00|PASS
+I (119240) ZB: BU|ZB_RECV|ep=11|cl=0x000c|attr=0x0055|val=1234.00|PASS
+I (119248) ZB: BU|ZB_RECV|ep=12|cl=0x000c|attr=0x0055|val=4980.00|PASS
+I (119251) ZB: BU|ZB_RECV|ep=13|cl=0x000c|attr=0x0055|val=410.00|PASS
+I (119259) ZB: BU|ZB_RECV|ep=14|cl=0x000c|attr=0x0055|val=5.00|PASS
+I (119262) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0055|val=0.00|PASS
+I (119268) ZB: BU|ZB_SEQ|seq=38|PASS
+I (119269) ZB: BU|ZB_RECV|ep=15|cl=0x000c|attr=0x0100|val=38.00|PASS

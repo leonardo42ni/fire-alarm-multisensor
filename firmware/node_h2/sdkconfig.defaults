@@ -1,7 +1,6 @@
 CONFIG_IDF_TARGET="esp32h2"
 CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
 CONFIG_FREERTOS_HZ=1000
-# [VERIFY T-006] Ten symbol ZB chua duoc kiem chung (chua co esp-zigbee-lib). Doi chieu voi Kconfig that khi them component.
 CONFIG_ZB_ENABLED=y
 CONFIG_ZB_RADIO_NATIVE=y
 CONFIG_ZB_ZED=y

@@ -1,8 +1,23 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
-- **Phase hiện tại:** Phase 0 — Môi trường, khung dự án, cổng G0
-- **Nhánh Git:** `master` (T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9`)
-- **Task vừa hoàn thành:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
+- **Phase hiện tại:** Phase 1 — Driver & lớp vật lý (breadboard + ứng dụng kiểm tra).
+- **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
+- **Nhánh Git:** `feat/T-006-spike-g0` (tách từ `master`; T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9` + docs `0810573`)
+- **Task vừa hoàn thành:** `T-006` — Spike G0 Zigbee (coordinator + end device, fake EP10–EP15).
+- **Task tiếp theo:** `T-101` — `node_h2/components/i2c_bus` + `bringup/bu_i2c_scan` (Phase 1).
+  - **Code:** `firmware/gw_h2/main/app_main.c` (ZC, PAN `0x1A62`, channel 25, EP1, report callback); `firmware/node_h2/main/app_main.c` (ED, steering, EP10 temp/humidity + EP11–EP15 analog input, report 3 s); fixture trong `firmware/node_h2/main/config.h`.
+  - **Dependency:** thêm `firmware/gw_h2/main/idf_component.yml` và `firmware/node_h2/main/idf_component.yml` (`espressif/esp-zigbee-lib ^1.6.0`, `espressif/esp-zboss-lib ^1.6.0`); lock thực tế `esp-zigbee-lib 1.6.8`, `esp-zboss-lib 1.6.4`; `idf.py reconfigure` cho `gw_h2` đã fetch thành công.
+  - **CMake:** `firmware/gw_h2/main/CMakeLists.txt` và `firmware/node_h2/main/CMakeLists.txt` thêm `nvs_flash` vào `REQUIRES`; node thêm `esp_timer` cho `esp_timer_get_time()`.
+  - **Build:** `idf.py -C firmware/node_h2 build` → PASS, `node_h2.bin` 0x6e1c0 (71% free); `idf.py -C firmware/gw_h2 build` → PASS, `gw_h2.bin` 0x90200 (62% free); `tools/build_all.ps1` → PASS cả 3 firmware. Không còn warning biên dịch ở lần build cuối; host CTest `SanityCheck` PASS sau khi sửa review.
+  - **Gateway EP:** coordinator EP1 dùng `esp_zb_ep_list_add_gateway_ep()` để nhận report từ cluster không khai báo trên coordinator (bỏ qua cluster data model check).
+  - **API:** đã cập nhật `docs/API_NOTES.md` với toàn bộ API/kiểu/hằng số Zigbee dùng trong T-006; xác nhận `ESP_ZB_ZED_CONFIG()`/`ESP_ZB_ZC_CONFIG()` là macro cục bộ, không có trong lib.
+  - **HIL/G0 (sau khi sửa review, 2026-11-12):** PASS trên `COM5` (`gw_h2`, MAC `74:4d:bd:ff:fe:64:10:74`) + `COM10` (`node_h2`, MAC `74:4d:bd:ff:fe:64:10:fa`); đã erase NVS + `zb_storage` để test factory-new. B1 log `tests/results/g0_gw_20261112.log` + `g0_node_20261112.log`, `serial_check.py --input` PASS cả hai: `FORMED|PAN=0x1a62|CH=25|SA=0x0000`, `JOIN|SA=0x53f1`, đủ EP10–EP15, `ZB_SEQ`. S2: `STEERING t_ms=126`, `JOINED t_ms=2992` → 2866 ms (~2,87 s) < 30 s.
+  - **B3/S4:** log `tests/results/g0_seq_20261112.log`, `seq=1..1000`; nhận 992 seq, thiếu 8 `[86,87,484,485,536,603,705,845]`, không duplicate → mất 0,8% ≤ 1% (`[PASS] seq=1000`).
+  - **S5 (V6, GW-only, 2026-11-13):** PASS. Log `tests/results/g0_s5_gwonly_20261113.log` + `g0_s5_gwonly_node_20261113.log`. Node giữ nguồn suốt test; GW `PRESENT` lúc 16:41:47.204, `BU|ZB_RECV` đầu tiên lúc 16:41:52.798 → **5,593 s** < 60 s. Node không boot lại sau khi bắt đầu capture; sau khi GW mất, node `ZB_SEND|FAIL` → `REJOIN|REQUEST` → `LEFT` → steering fail trong lúc GW tắt, rồi `JOINED t_ms=101854` khi GW trở lại. Đã thêm logic local-reset + steering khi gửi lỗi và xử lý `NO_ACTIVE_LINKS_LEFT`/`LEAVE`.
+  - **Review T-006:** Đã sửa V1–V6 (trước đó bị từ chối với B1–B6, R1–R4); V6 PASS 5,593 s. Đã sửa code: B2 log `cl`/`attr`; B3 dùng ApplicationType `0x0100` làm `seq` trên `EP_FLAGS` (disassembly xác nhận kiểu U32), gateway log `BU|ZB_SEQ`; B4 thêm `t_ms` vào `STEERING`/`JOINED`/`REJOINED`; R1 TAG gateway `ZB`; R2 node dùng all-channel mask; R3 giữ `esp_zb_zcl_status_t`; R4 bỏ cast callback. Đã xác minh B5 Kconfig (`ZB_ENABLED`, `ZB_RADIO_NATIVE`, `ZB_ZED`/`ZB_ZCZR`) và partition (`zb_storage` 16K, `zb_fct` 1K), xóa comment `[VERIFY T-006]`; đã cập nhật B6 `docs/API_NOTES.md` (thêm `esp_timer_get_time`, `U32`, ApplicationType, all-channel mask, ghi chú B3/B5). Build lại cả hai firmware và host CTest PASS.
+  - **Còn lại:** Phase 0 đã hoàn thành; T-006 đã được duyệt commit; tag `phase-0-done` chưa gắn (chờ merge/người dùng).
+  - **Môi trường:** `export.ps1` mặc định trỏ Python 3.15 không tồn tại; phải đặt `$env:IDF_PYTHON_ENV_PATH='E:\Espressif\python_env\idf5.5_py3.11_env'` trước khi dot-source.
+- **Task trước:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
   - **File:** `tools/serial_check.py`, `tests/vectors/serial_sample.log`.
   - **Chức năng:** đọc serial qua `pyserial` hoặc `--input` log; lọc dòng `BU|...`; `--expect`/`--forbid` lặp lại; `--timeout`, `--baud`, `--log`; exit 0/1; lỗi CLI/tool exit 2.
   - **Selftest:** `python tools/serial_check.py --selftest` → 7 case OK, `SELFTEST PASS`, exit 0.
@@ -10,7 +25,7 @@
   - **Lưu ý:** `pyserial 3.5` đã cài trong venv ESP-IDF Python 3.11.2; Python 3.15 mặc định chưa cài. Dùng Python venv khi chạy serial thật; đã ghi vào `docs/ENV.md`. `--input` là tiện ích cho log, không thay serial thật.
   - **Review T-005 (E1–E6):** E1 chỉ dừng sớm khi `--forbid` rỗng; E2 ghi rõ `--forbid` đơn lẻ chạy hết timeout; E3 ghi rõ `--timeout` chỉ áp dụng cho `--port`; E4 log ghi đủ cửa sổ khi có `--forbid`; E5 mất kết nối COM được bắt qua `OSError` → exit 2; E6 nhánh serial chưa kiểm chứng với cổng thật, xác nhận ở T-006. Selftest thêm ca `forbid_after_match`.
   - **Verify lần cuối:** selftest exit 0; expect exit 0; forbid exit 1; thiếu `--expect`/`--forbid` exit 2.
-- **Task trước:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
+- **Task trước nữa:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
   - **File:** `tests/host/test_util.h`, `tests/host/CMakeLists.txt`, `tests/host/test_sanity.c`.
   - **Framework:** C11 thuần, header-only; macro `TEST_ASSERT`, `TEST_ASSERT_EQUAL_INT`, `TEST_ASSERT_FLOAT_WITHIN`, `TEST_ASSERT_STR_EQUAL`; đếm test case (`run/passed/failed`) và `test_summary()` trả 0/1.
   - **CTest:** target `test_sanity`, test name `SanityCheck`; include `tests/host`, `firmware/common`, `firmware/lib_fusion/include`; option `ENABLE_SANITIZERS` (mặc định OFF) thêm `-fsanitize=address,undefined` khi bật; artifact/log nằm trong `build_host/` (đã git-ignore).
@@ -25,7 +40,7 @@
   - **R3 check:** file tạm chỉ include `test_util.h` (không dùng `test_run`/`test_summary`) biên dịch `gcc -std=c11 -Wall -Wextra -Werror` → exit 0; đã xóa file tạm.
   - **Lệch plan:** §4 T-004 liệt kê alias `ASSERT_TRUE/EQ_INT/NEAR`; đã bỏ theo review R4. Khi T-201/T-301 cần, dùng `TEST_ASSERT*` hoặc thêm alias có caller thật.
   - **Review T-004 (N1–N3):** N1 giữ `%lld` vì host test dùng UCRT; N2 cập nhật test khi bump `FW_VERSION`; N3 lệnh PATH tuyệt đối chỉ đúng máy hiện tại. Cả 3 không chặn commit.
-- **Task trước nữa:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
+- **Task cũ hơn:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
   - **Sửa theo `review.md` (V1–V9):**
@@ -39,13 +54,14 @@
   - **Trạng thái nghiệm thu:** `tools/build_all.ps1` với `secrets.h` (copy từ `secrets.example.h`) → `[PASS] node_h2`, `[PASS] gw_h2`, `[PASS] gw_host`, `[PASS] Ca 3 firmware build thanh cong.`; không có cảnh báo `unused-const-variable`. Xóa `secrets.h` → `gw_host` dừng với `#error "Thieu main/secrets.h: sao chep tu secrets.example.h va dien thong tin"` (exit 2). `secrets.h` thiếu `WIFI_SSID` → dừng với `#error "Thieu WIFI_SSID trong secrets.h"` (exit 2). Đã khôi phục `secrets.h` đầy đủ.
   - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) để T-201.
   - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` vẫn chờ T-006 xác nhận.
-- **Task tiếp theo cần làm:**
-  - `T-006`: Spike G0 — coordinator/ED Zigbee, join, gửi EP10–15 bằng giá trị giả, điền `API_NOTES.md`.
+- **Việc tiếp theo:**
+  - `T-006`: **G0 đạt, Phase 0 hoàn thành**; đã đủ 6 mục nghiệm thu, V6 GW-only PASS **5,593 s** (node giữ nguồn, local-reset + steering, không reboot); build/CTest PASS; commit T-006 (không commit `review.md`).
+  - `T-101`: bắt đầu Phase 1 — `node_h2/components/i2c_bus` + `bringup/bu_i2c_scan`.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
   - `esp_reset_reason()` và macro `ESP_LOGI` đã được đối chiếu chữ ký trên bản cài thật v5.5.5 và ghi vào `docs/API_NOTES.md`.
-  - `sdkconfig.defaults` và `partitions.csv` copy nguyên văn từ `docs/DEV_CODING_PLAN.md` §3. Kích thước `zb_storage`/`zb_fct` vẫn mang dấu `[VERIFY]` của kế hoạch, sẽ kiểm tra ở T-006 khi thêm Zigbee.
-  - Các symbol `CONFIG_ZB_*` trong `sdkconfig.defaults` chưa được kiểm chứng; T-006 phải xác nhận bằng `idf.py menuconfig`/grep Kconfig của `esp-zigbee-lib`.
+  - `sdkconfig.defaults` và `partitions.csv` copy nguyên văn từ `docs/DEV_CODING_PLAN.md` §3. T-006 đã xác nhận `zb_storage` 16K, `zb_fct` 1K, `factory` 1500K; boot log không báo lỗi partition.
+  - Các symbol `CONFIG_ZB_*` trong `sdkconfig.defaults` đã được T-006 đối chiếu Kconfig thật: `CONFIG_ZB_ENABLED`, `CONFIG_ZB_RADIO_NATIVE`, `CONFIG_ZB_ZED` (node), `CONFIG_ZB_ZCZR` (gateway); đã xóa comment `[VERIFY T-006]`.
   - Header T-003: `shared_config.h` giữ hằng số dùng chung (kênh/PAN/EP, report, HB, UART); `node_h2/config.h` giữ I2C/SHT31/CCS811/ADC/flame/prealert; `gw_h2/config.h` giữ UART/cache/join; `gw_host/config.h` giữ RGB/còi/nút/PWR/MQTT/`NODES_MAP`.
   - `BENCH_MODE=1` rút `CCS811_STABLE_MS` và `MQ2_WARMUP_MS` còn 2 phút; mặc định 20 phút và 30 phút. `RELEASE_BUILD` mặc định 0; release build phải đặt `-DRELEASE_BUILD=1` để chặn `BENCH_MODE=1`.
   - `NODES_MAP[]` hiện chỉ có sentinel `{"",""}`; định nghĩa duy nhất ở `gw_host/main/nodes_map.c`; điền IEEE thật khi có board.
