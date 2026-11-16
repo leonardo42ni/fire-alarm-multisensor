@@ -2,6 +2,12 @@
 
 Hệ thống cảnh báo cháy đa cảm biến dùng ESP32-H2 (Zigbee) và ESP32 (Gateway host).
 
+## Trạng thái
+
+- **Phase 0 (G0 Zigbee): hoàn thành**, tag `phase-0-done`.
+- Dữ liệu G0 hiện là giá trị giả; log bằng chứng ở `tests/results/g0_*.log`.
+- **Phase 1** bắt đầu với `T-101` (`i2c_bus` + `bringup/bu_i2c_scan`).
+
 ## Thành phần
 
 - `firmware/node_h2`: Node end-device Zigbee, target `esp32h2`.

@@ -95,6 +95,27 @@ cmake --build build_host
 ctest --test-dir build_host --output-on-failure
 ```
 
+## Git remote / GitHub
+
+Repo public hiện tại:
+
+```text
+origin  https://github.com/leonardo42ni/fire-alarm-multisensor.git
+```
+
+Thiết lập và kiểm tra:
+
+```powershell
+git remote -v
+git push -u origin master
+git push origin --tags
+```
+
+- Xác thực HTTPS qua Git Credential Manager (mặc định của Git for Windows).
+- Không commit/push `secrets.h`, `.env`, `build/`, `build_host/`, `managed_components/`.
+- Tag Phase được đẩy riêng bằng `git push origin --tags`.
+- Nếu đổi tên repo: `git remote set-url origin <url-moi>`.
+
 ## Ghi chú
 
 - Không dùng PlatformIO cho firmware.

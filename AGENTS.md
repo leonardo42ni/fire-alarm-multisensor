@@ -23,3 +23,4 @@ Khi bắt đầu phiên chat mới hoặc khi người dùng yêu cầu làm ti�
 8. Đầu ra (`buzzer_init()`, `rgb_init()`) phải đưa về mức TẮT ở ngay dòng đầu tiên của `app_main` trước cả NVS/WiFi[cite: 2].
 9. Sau khi hoàn thành hoặc sửa xong 1 Task: Cập nhật ngay file `STATE.md` và nhắc người dùng chạy `.\export_diff.ps1` để kiểm duyệt.
 10. Khi không chắc về pin/thanh ghi/API: hỏi, không đoán.
+11. Không tự push/merge/tag lên remote public khi chưa được người dùng cho phép; quy trình remote ở `docs/DEV_CODING_PLAN.md` §0.4 và `docs/ENV.md`.

@@ -37,6 +37,13 @@ Agent sinh code có ba kiểu lỗi lặp lại: (1) **bịa API** (đặc biệ
 - Muốn đổi **hợp đồng** (UART NDJSON, endpoint Zigbee, topic MQTT) so với `GatewayPlan.md` §4–§5.
 - Muốn thêm thư viện bên thứ ba chưa có trong §3.
 
+### 0.4 Lưu trữ từ xa (GitHub)
+- Remote `origin` là repo public: `https://github.com/leonardo42ni/fire-alarm-multisensor.git`.
+- Sau mỗi task đã được duyệt: commit trên nhánh task, merge vào `master`, rồi `git push origin master`.
+- Khi hết Phase: tạo tag `phase-N-done` trên commit merge rồi `git push origin master --tags`.
+- Trước khi push: `git status` phải sạch; không có `secrets.h`, `.env`, build output hoặc log chứa bí mật.
+- Không tự push/merge/tag nếu người dùng chưa cho phép.
+
 ---
 
 ## 1. Nguyên tắc lập trình & kỷ luật mã nguồn
