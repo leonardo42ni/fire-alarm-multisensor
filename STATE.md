@@ -3,6 +3,7 @@
 - **Phase hiện tại:** Phase 1 — Driver & lớp vật lý (breadboard + ứng dụng kiểm tra).
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
 - **Nhánh Git:** `master` (Phase 0 merged từ `feat/T-006-spike-g0`; T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9` + docs `0810573`)
+- **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
 - **Task vừa hoàn thành:** `T-006` — Spike G0 Zigbee (coordinator + end device, fake EP10–EP15).
 - **Task tiếp theo:** `T-101` — `node_h2/components/i2c_bus` + `bringup/bu_i2c_scan` (Phase 1).
   - **Code:** `firmware/gw_h2/main/app_main.c` (ZC, PAN `0x1A62`, channel 25, EP1, report callback); `firmware/node_h2/main/app_main.c` (ED, steering, EP10 temp/humidity + EP11–EP15 analog input, report 3 s); fixture trong `firmware/node_h2/main/config.h`.

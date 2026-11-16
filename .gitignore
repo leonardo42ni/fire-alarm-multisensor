@@ -24,9 +24,8 @@ node_modules/
 tests/results/*.log
 !tests/results/g0_*.log
 
-# Local review / diff tooling
+# Local review notes
 review.md
-export_diff.ps1
 
 # IDE / OS
 .vscode/
