@@ -1,0 +1,64 @@
+ESP-ROM:esp32h2-20221101
+Build:Nov  1 2022
+rst:0x15 (USB_UART_HPSYS),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40000fe4
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x408460f0,len:0x16e0
+load:0x4083c2d0,len:0xe70
+load:0x4083efd0,len:0x2fd0
+entry 0x4083c2da
+I (23) boot: ESP-IDF v5.5.5 2nd stage bootloader
+I (23) boot: compile time Oct 27 2026 11:45:18
+I (24) boot: chip revision: v0.1
+I (24) boot: efuse block revision: v0.3
+I (24) boot.esp32h2: SPI Speed      : 64MHz
+I (25) boot.esp32h2: SPI Mode       : DIO
+I (25) boot.esp32h2: SPI Flash Size : 2MB
+I (25) boot: Enabling RNG early entropy source...
+I (26) boot: Partition Table:
+I (26) boot: ## Label            Usage          Type ST Offset   Length
+I (27) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (27) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (28) boot:  2 zb_storage       Unknown data     01 81 00010000 00004000
+I (29) boot:  3 zb_fct           Unknown data     01 81 00014000 00000400
+I (29) boot:  4 factory          factory app      00 00 00020000 00177000
+I (30) boot: End of partition table
+I (30) esp_image: segment 0: paddr=00020020 vaddr=42058020 size=0cbd4h ( 52180) map
+I (45) esp_image: segment 1: paddr=0002cbfc vaddr=40800000 size=0341ch ( 13340) load
+I (50) esp_image: segment 2: paddr=00030020 vaddr=42000020 size=5150ch (333068) map
+I (135) esp_image: segment 3: paddr=00081534 vaddr=4080341c size=0a82ch ( 43052) load
+I (148) esp_image: segment 4: paddr=0008bd68 vaddr=4080dc50 size=022ach (  8876) load
+I (156) boot: Loaded app from partition at offset 0x20000
+I (156) boot: Disabling RNG early entropy source...
+I (158) cpu_start: Unicore app
+I (166) cpu_start: Pro cpu start user code
+I (166) cpu_start: cpu freq: 96000000 Hz
+I (167) app_init: Application information:
+I (167) app_init: Project name:     node_h2
+I (167) app_init: App version:      0810573-dirty
+I (168) app_init: Compile time:     Nov 11 2026 15:16:01
+I (168) app_init: ELF file SHA256:  aab0e8e69...
+I (168) app_init: ESP-IDF:          v5.5.5
+I (169) efuse_init: Min chip rev:     v0.0
+I (169) efuse_init: Max chip rev:     v1.99 
+I (169) efuse_init: Chip rev:         v0.1
+I (170) heap_init: Initializing. RAM available for dynamic allocation:
+I (170) heap_init: At 408142F0 len 00039090 (228 KiB): RAM
+I (170) heap_init: At 4084D380 len 00002B60 (10 KiB): RAM
+I (171) heap_init: At 50000000 len 00000FE8 (3 KiB): RTCRAM
+I (172) spi_flash: detected chip: gd
+I (172) spi_flash: flash io: dio
+W (173) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (174) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (175) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (176) main_task: Started on CPU0
+I (177) main_task: Calling app_main()
+I (177) SNS: firmware=node_h2
+I (177) SNS: version=0.1.0
+I (177) SNS: reset_reason=11
+I (200) phy: phy_version: 324,2, 0d8cd71, Apr 10 2026, 13:58:46
+I (201) phy: libbtbb version: 8db04ea, Apr 10 2026, 13:58:59
+I (211) main_task: Returned from app_main()
+I (297) SNS: BU|ZB_NODE|STEERING|t_ms=126|PASS
+I (3164) SNS: BU|ZB_NODE|JOINED|PAN=0x1a62|CH=25|SA=0x53f1|t_ms=2992|PASS

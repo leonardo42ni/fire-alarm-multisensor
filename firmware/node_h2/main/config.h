@@ -73,5 +73,17 @@
 #define ZB_TASK_PRIO 5
 #define ZB_RETRY_MIN_MS 5000u
 #define ZB_RETRY_MAX_MS 60000u
+#define ZB_LOCK_TIMEOUT_MS 1000u
+#define ZB_REJOIN_FAIL_THRESHOLD 1u
+
+/* T-006 G0 spike fixtures. */
+#define SPIKE_REPORT_MS REPORT_PREALERT_MS
+#define SPIKE_TEMP_C 25.5f
+#define SPIKE_HUM_PCT 60.0f
+#define SPIKE_MQ2_MV 1234.0f
+#define SPIKE_FLAME_MV 4980.0f
+#define SPIKE_ECO2_PPM 410.0f
+#define SPIKE_TVOC_PPB 5.0f
+#define SPIKE_FLAGS 0.0f
 
 #endif

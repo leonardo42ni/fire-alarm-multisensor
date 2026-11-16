@@ -11,6 +11,9 @@
 #ifndef COORD_EP
 #define COORD_EP 1
 #endif
+#define ZCL_CENTI_SCALE 100.0f
+#define COORD_SHORT_ADDR 0x0000u
+#define ZB_INSTALL_CODE_POLICY false
 
 /* Nhom bat bien theo hop dong GatewayPlan §4.2. */
 #define EP_TEMP 10

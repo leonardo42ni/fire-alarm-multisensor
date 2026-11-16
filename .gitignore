@@ -22,6 +22,11 @@ node_modules/
 
 # Test artifacts (keep .gitkeep)
 tests/results/*.log
+!tests/results/g0_*.log
+
+# Local review / diff tooling
+review.md
+export_diff.ps1
 
 # IDE / OS
 .vscode/
