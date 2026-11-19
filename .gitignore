@@ -1,6 +1,7 @@
 # ESP-IDF build outputs
 build/
 build_host/
+build_host_san/
 sdkconfig
 sdkconfig.old
 managed_components/
@@ -37,3 +38,5 @@ CMakePresets.json
 .DS_Store
 Thumbs.db
 *.swp
+
+_ref_*/
