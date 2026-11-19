@@ -1,11 +1,26 @@
 # TRẠNG THÁI THỰC THI DỰ ÁN (PROJECT STATE)
 
-- **Phase hiện tại:** Phase 1 — Driver & lớp vật lý (breadboard + ứng dụng kiểm tra).
+- **Phase hiện tại:** Phase 2 — Giao thức & Gateway, **triển khai cuốn chiếu trước Phase 1**. Phase 1 (driver SHT31/CCS811/ADC/LED/còi) **tạm hoãn** vì chưa có driver cảm biến và driver đầu ra; `node_h2` tiếp tục dùng dữ liệu giả lập như T-006, `gw_host` mới chỉ parse UART2 + log, chưa gọi fusion/còi/LED.
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
-- **Nhánh Git:** `master` (Phase 0 merged từ `feat/T-006-spike-g0`; T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9` + docs `0810573`)
+- **Nhánh Git:** `feat/T-201-proto-ndjson` (tách từ `master` sau Phase 0; T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9` + docs `0810573`; T-006 `ceef62c`).
 - **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
-- **Task vừa hoàn thành:** `T-006` — Spike G0 Zigbee (coordinator + end device, fake EP10–EP15).
-- **Task tiếp theo:** `T-101` — `node_h2/components/i2c_bus` + `bringup/bu_i2c_scan` (Phase 1).
+- **Task vừa hoàn thành:** `T-201` **đạt và đã commit** (review vòng 1 B1–B10, vòng 2 R1–R2/M1) — Thư viện `proto_ndjson` (NDJSON §5.1) + unit test PC (Phase 2).
+  - **File:** `firmware/common/proto_ndjson.h`; implementation tách nhỏ để giữ giới hạn file: `proto_ndjson.c` (line assembler), `proto_ndjson_json.c` (scanner + `flat_*`), `proto_ndjson_dec.c` (decoder), `proto_ndjson_enc.c` (encoder), `proto_ndjson_internal.h` (hàm dùng chung nội bộ); test `tests/host/test_proto_enc.c`, `test_proto_dec.c`, `test_proto_dec_err.c`, `test_proto_asm.c`, `test_proto_common.h`.
+  - **Hợp đồng §5.1:** đủ `hello/hb/join/leave/rpt` (H2→HOST) và `cmd/ack` (HOST→H2); `PROTO_MAX_LINE=256`, `PROTO_IEEE_LEN=17`; encoder trả độ dài gồm `\n` hoặc `PROTO_E_BUF` và đặt `buf[0]=0` khi lỗi; decoder cắt `\r\n`, trả `TOO_LONG/SYNTAX/TYPE/FIELD`; `rpt` chỉ in trường có bit `valid`, bỏ NaN/Inf; `line_asm_*` ghép dòng, chống tràn >255 byte.
+  - **Quyết định nhỏ (không đổi hợp đồng):** `rssi/lqi` luôn in trong `rpt` (metadata liên kết, mẫu §5.1 có); `proto_enc_leave` giữ chữ ký `(buf,cap,ieee,sa)` nhưng bỏ `sa` đúng mẫu; khóa trùng → **giá trị đầu tiên** thắng; `proto_dec` chấp nhận dòng không có `\n` (line assembler mới là nơi bắt buộc `\n`).
+  - **Review vòng 1:** đã sửa đủ B1–B10 (tách test thành `test_proto_enc/dec/asm.c` + `test_proto_common.h`; siết `scan_string`, `flat_find`, `parse_hex`; chặn tràn float; `ieee_ok` không dùng `strlen`; giữ dòng 255 ký tự + `\r\n`; dòng rỗng trả `SYNTAX`; xóa `out` khi lỗi; đặt tên hằng giới hạn; bổ sung test).
+  - **Review vòng 2:** đã sửa R1–R2 (gom `proto_hex_val`/`proto_ieee_ok` dùng chung; tách `test_proto_dec_err.c`; sửa mảng 257 byte trong test CRLF) và M1.
+  - **Test:** 41 case (`enc=13`, `dec=14`, `dec_err=8`, `asm=6`; tất cả PASS), gồm hợp lệ, thiếu trường, sai kiểu, quá dài, ký tự lạ, tràn buffer encode/line, khóa trùng, khoảng trắng, thứ tự khóa đảo, NaN/Inf, `flat_find` không khớp chuỗi con trong value, escape `\` + NUL, IEEE thiếu NUL, round-trip 7 loại bản tin.
+  - **Verify:** `cmake -S tests/host -B build_host && cmake --build build_host && ctest` → `100% tests passed, 0 tests failed out of 5` (`ProtoNdjson_proto_enc`, `ProtoNdjson_proto_dec`, `ProtoNdjson_proto_dec_err`, `ProtoNdjson_proto_asm`, `SanityCheck`).
+  - **Ghi chú N1–N4:** `rssi/lqi` luôn in, `0` = không rõ (N1); comment header đã đổi thành "escaped strings are rejected" (N2); ghi rõ NULL → `PROTO_E_FIELD`/`PROTO_E_BUF` (N3); `flat_get_num` yêu cầu đầu vào đã qua `proto_json_valid_object` (N4).
+  - **ASAN/UBSAN:** PASS với Clang 23.1.5 MSYS2 CLANG64 (`-DENABLE_SANITIZERS=ON`, `build_host_san`), 5/5 CTest pass, không báo lỗi sanitizer. Đã cài `mingw-w64-clang-x86_64-clang` + `compiler-rt` (GCC UCRT64 14.2.0 không có runtime `libasan`/`libubsan`).
+  - **Firmware:** `firmware/common/CMakeLists.txt` đăng ký 4 file `.c`; `idf.py -C firmware/node_h2|gw_h2|gw_host build` → PASS, không warning; `node_h2.bin` 0x6e1c0, `gw_h2.bin` 0x90200, `gw_host.bin` 0x27b20.
+  - **Chưa làm (đúng phạm vi):** chưa nối `proto_ndjson` vào `uart_bridge`/`uart_link`; chưa đụng driver Phase 1.
+- **Task tiếp theo:** `T-203` — `gw_h2/components/zb_coord` + `node_cache` (Phase 2; T-202 phụ thuộc Phase 1 đang hoãn).
+  - **Phạm vi:** đọc `docs/DEV_CODING_PLAN.md` §5.4.1–§5.4.2; tách coordinator khỏi `gw_h2/main/app_main.c`, thêm component `zb_coord` (form/open/join window/reset, report callback) và `node_cache` (join/leave, map EP–cluster–attr → `rpt_t`, coalesce 300 ms, `nc_take` tăng `seq`).
+  - **Hợp đồng:** giữ `q_zb_evt`/`zb_evt_t`; không đổi `proto_ndjson`; không gọi driver Phase 1.
+  - **Verify PC trước:** build `gw_h2`; nếu tách logic thuần được thì thêm host test cho `node_cache`. **HIL sau:** cần 2 board ESP32-H2 (GW + node) và log report/`seq`.
+- **Task trước:** `T-006` — Spike G0 Zigbee (coordinator + end device, fake EP10–EP15).
   - **Code:** `firmware/gw_h2/main/app_main.c` (ZC, PAN `0x1A62`, channel 25, EP1, report callback); `firmware/node_h2/main/app_main.c` (ED, steering, EP10 temp/humidity + EP11–EP15 analog input, report 3 s); fixture trong `firmware/node_h2/main/config.h`.
   - **Dependency:** thêm `firmware/gw_h2/main/idf_component.yml` và `firmware/node_h2/main/idf_component.yml` (`espressif/esp-zigbee-lib ^1.6.0`, `espressif/esp-zboss-lib ^1.6.0`); lock thực tế `esp-zigbee-lib 1.6.8`, `esp-zboss-lib 1.6.4`; `idf.py reconfigure` cho `gw_h2` đã fetch thành công.
   - **CMake:** `firmware/gw_h2/main/CMakeLists.txt` và `firmware/node_h2/main/CMakeLists.txt` thêm `nvs_flash` vào `REQUIRES`; node thêm `esp_timer` cho `esp_timer_get_time()`.
@@ -18,7 +33,7 @@
   - **Review T-006:** Đã sửa V1–V6 (trước đó bị từ chối với B1–B6, R1–R4); V6 PASS 5,593 s. Đã sửa code: B2 log `cl`/`attr`; B3 dùng ApplicationType `0x0100` làm `seq` trên `EP_FLAGS` (disassembly xác nhận kiểu U32), gateway log `BU|ZB_SEQ`; B4 thêm `t_ms` vào `STEERING`/`JOINED`/`REJOINED`; R1 TAG gateway `ZB`; R2 node dùng all-channel mask; R3 giữ `esp_zb_zcl_status_t`; R4 bỏ cast callback. Đã xác minh B5 Kconfig (`ZB_ENABLED`, `ZB_RADIO_NATIVE`, `ZB_ZED`/`ZB_ZCZR`) và partition (`zb_storage` 16K, `zb_fct` 1K), xóa comment `[VERIFY T-006]`; đã cập nhật B6 `docs/API_NOTES.md` (thêm `esp_timer_get_time`, `U32`, ApplicationType, all-channel mask, ghi chú B3/B5). Build lại cả hai firmware và host CTest PASS.
   - **Còn lại:** Phase 0 đã hoàn thành; T-006 đã commit; merge vào `master`; tag `phase-0-done`.
   - **Môi trường:** `export.ps1` mặc định trỏ Python 3.15 không tồn tại; phải đặt `$env:IDF_PYTHON_ENV_PATH='E:\Espressif\python_env\idf5.5_py3.11_env'` trước khi dot-source.
-- **Task trước:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
+- **Task trước nữa:** `T-005` — Công cụ `tools/serial_check.py` và log mẫu.
   - **File:** `tools/serial_check.py`, `tests/vectors/serial_sample.log`.
   - **Chức năng:** đọc serial qua `pyserial` hoặc `--input` log; lọc dòng `BU|...`; `--expect`/`--forbid` lặp lại; `--timeout`, `--baud`, `--log`; exit 0/1; lỗi CLI/tool exit 2.
   - **Selftest:** `python tools/serial_check.py --selftest` → 7 case OK, `SELFTEST PASS`, exit 0.
@@ -26,7 +41,7 @@
   - **Lưu ý:** `pyserial 3.5` đã cài trong venv ESP-IDF Python 3.11.2; Python 3.15 mặc định chưa cài. Dùng Python venv khi chạy serial thật; đã ghi vào `docs/ENV.md`. `--input` là tiện ích cho log, không thay serial thật.
   - **Review T-005 (E1–E6):** E1 chỉ dừng sớm khi `--forbid` rỗng; E2 ghi rõ `--forbid` đơn lẻ chạy hết timeout; E3 ghi rõ `--timeout` chỉ áp dụng cho `--port`; E4 log ghi đủ cửa sổ khi có `--forbid`; E5 mất kết nối COM được bắt qua `OSError` → exit 2; E6 nhánh serial chưa kiểm chứng với cổng thật, xác nhận ở T-006. Selftest thêm ca `forbid_after_match`.
   - **Verify lần cuối:** selftest exit 0; expect exit 0; forbid exit 1; thiếu `--expect`/`--forbid` exit 2.
-- **Task trước nữa:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
+- **Task cũ hơn:** `T-004` — Hạ tầng Host Unit Test bằng CMake/CTest và `test_util.h` trên PC.
   - **File:** `tests/host/test_util.h`, `tests/host/CMakeLists.txt`, `tests/host/test_sanity.c`.
   - **Framework:** C11 thuần, header-only; macro `TEST_ASSERT`, `TEST_ASSERT_EQUAL_INT`, `TEST_ASSERT_FLOAT_WITHIN`, `TEST_ASSERT_STR_EQUAL`; đếm test case (`run/passed/failed`) và `test_summary()` trả 0/1.
   - **CTest:** target `test_sanity`, test name `SanityCheck`; include `tests/host`, `firmware/common`, `firmware/lib_fusion/include`; option `ENABLE_SANITIZERS` (mặc định OFF) thêm `-fsanitize=address,undefined` khi bật; artifact/log nằm trong `build_host/` (đã git-ignore).
@@ -41,7 +56,7 @@
   - **R3 check:** file tạm chỉ include `test_util.h` (không dùng `test_run`/`test_summary`) biên dịch `gcc -std=c11 -Wall -Wextra -Werror` → exit 0; đã xóa file tạm.
   - **Lệch plan:** §4 T-004 liệt kê alias `ASSERT_TRUE/EQ_INT/NEAR`; đã bỏ theo review R4. Khi T-201/T-301 cần, dùng `TEST_ASSERT*` hoặc thêm alias có caller thật.
   - **Review T-004 (N1–N3):** N1 giữ `%lld` vì host test dùng UCRT; N2 cập nhật test khi bump `FW_VERSION`; N3 lệnh PATH tuyệt đối chỉ đúng máy hiện tại. Cả 3 không chặn commit.
-- **Task cũ hơn:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
+- **Task cũ hơn nữa:** `T-003` — Hoàn thiện header cấu hình: `config.h` ×3, `shared_config.h`, `secrets.example.h`, `error.h`, `version.h`; bổ sung `gw_host/main/nodes_map.c`.
   - **Nội dung:** khai báo chân GPIO, địa chỉ I2C, chu kỳ task/report, ngưỡng prealert/ADC/PWR, tham số Zigbee/UART/MQTT; `gw_host/config.h` chặn build bằng `#error` nếu thiếu `secrets.h`.
   - **Giá trị đã chốt:** `ZB_CHANNEL=25`, `ZB_PAN_ID=0x1A62`, `COORD_EP=1`; I2C 100 kHz, pull-up nội bộ 0; `MQ2_WARMUP_MS=30 phút`, `BENCH_MODE=0`; LED vàng R=255/G=160; `NODES_MAP[]` để trống sentinel; `error.h` có `app_err_t`; `version.h` có MAJOR/MINOR/PATCH.
   - **Sửa theo `review.md` (V1–V9):**
@@ -53,11 +68,13 @@
     - V6: đã ghi `app_err_t` là kiểu nội bộ, không alias `esp_err_t` vào `docs/API_NOTES.md`.
     - V7: `FW_VERSION` ghép từ `FW_VERSION_MAJOR/MINOR/PATCH` bằng macro stringify.
   - **Trạng thái nghiệm thu:** `tools/build_all.ps1` với `secrets.h` (copy từ `secrets.example.h`) → `[PASS] node_h2`, `[PASS] gw_h2`, `[PASS] gw_host`, `[PASS] Ca 3 firmware build thanh cong.`; không có cảnh báo `unused-const-variable`. Xóa `secrets.h` → `gw_host` dừng với `#error "Thieu main/secrets.h: sao chep tu secrets.example.h va dien thong tin"` (exit 2). `secrets.h` thiếu `WIFI_SSID` → dừng với `#error "Thieu WIFI_SSID trong secrets.h"` (exit 2). Đã khôi phục `secrets.h` đầy đủ.
-  - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) để T-201.
-  - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` vẫn chờ T-006 xác nhận.
+  - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) đã xong ở T-201.
+  - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` đã xác nhận ở T-006.
 - **Việc tiếp theo:**
-  - `T-006`: **G0 đạt, Phase 0 hoàn thành**; đã đủ 6 mục nghiệm thu, V6 GW-only PASS **5,593 s** (node giữ nguồn, local-reset + steering, không reboot); build/CTest PASS; commit T-006; merge vào `master`; tag `phase-0-done`.
-  - `T-101`: bắt đầu Phase 1 — `node_h2/components/i2c_bus` + `bringup/bu_i2c_scan`.
+  - `T-201`: hoàn thành, đã commit; CTest 5/5 + ASAN/UBSAN 5/5 PASS, 3 firmware build PASS.
+  - `T-203`: làm tiếp Phase 2 — `gw_h2/components/zb_coord` + `node_cache` (T-202 chờ driver Phase 1). Bắt đầu bằng đọc §5.4.1–§5.4.2 và tách dần từ `gw_h2/main/app_main.c`.
+  - Phase 1 (`T-101`…) vẫn tạm hoãn đến khi có driver cảm biến/đầu ra; không include header phần cứng Phase 1 vào `node_h2`/`gw_host`.
+  - Chưa cần cắm board cho T-203 phần code/build; chỉ cần 2 board ESP32-H2 khi chạy HIL cuối task.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
   - `esp_reset_reason()` và macro `ESP_LOGI` đã được đối chiếu chữ ký trên bản cài thật v5.5.5 và ghi vào `docs/API_NOTES.md`.
@@ -70,5 +87,6 @@
   - Cây thư mục rỗng theo §2 đã được tạo (components/, bringup/, cloud/, tests/host, tests/vectors); các thư mục rỗng không được Git theo dõi.
   - Việc tắt đầu ra (còi/LED) theo §1.3 sẽ làm ở task `alarm_out`/`buzzer` (T-112), không nằm trong T-002/T-003.
   - Host test: CMake 3.30.2 + Ninja 1.12.1 lấy từ `E:\Espressif\tools`; GCC 14.2.0 MSYS2 UCRT64 tại `C:\msys64\ucrt64\bin`. CMake mặc định chọn NMake nên phải đặt `CMAKE_GENERATOR=Ninja` (hoặc `-G Ninja`).
+  - Sanitizer T-201: GCC UCRT64 14.2.0 **không có** `libasan`/`libubsan`; đã cài Clang 23.1.5 + `compiler-rt` MSYS2 CLANG64. Lệnh: `cmake -S tests/host -B build_host_san -DCMAKE_C_COMPILER=C:/msys64/clang64/bin/clang.exe -DENABLE_SANITIZERS=ON`, sau đó `cmake --build build_host_san && ctest --test-dir build_host_san --output-on-failure` (cần `C:\msys64\clang64\bin` trong `PATH` khi chạy).
   - `tests/host/test_util.h` là header-only, bộ đếm `static` có `TEST_UTIL_UNUSED`; macro assert `return 1` khi fail nên hàm test phải trả `int` và được gọi qua `test_run(name, fn)`. Quy ước mỗi executable chỉ có một file test include header này. Đã bỏ alias `ASSERT_*`, macro dùng tiền tố `_tu_*`; không còn assert thừa `FW_VERSION[0]`.
   - T-005: Đã sửa lỗ hổng E1 (chỉ dừng sớm khi không có `--forbid`). Tham số `--timeout` chỉ áp dụng cho chế độ `--port`. E6: nhánh đọc serial vật lý chưa kiểm chứng, sẽ xác nhận trực tiếp tại HIL/G0/T-006; `pyserial 3.5` đã cài trong venv IDF Python 3.11.2 và ghi trong `docs/ENV.md`.

@@ -171,3 +171,7 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
   `g0_s5d_gw_20261112.log` + `g0_s5d_node_20261112.log`: GW boot → report đầu 3,337 s,
   node `REJOINED` 2,466 s; cả hai < 60 s. Lần GW-only thứ hai không capture được do cổng serial
   không reopen; phép đo đồng thời được dùng làm bằng chứng S5 và ghi rõ caveat.
+- **T-201/N1:** `proto_enc_rpt` luôn in `rssi`/`lqi`; giá trị `0` nghĩa là "không rõ".
+  Nếu §5.1 sau này yêu cầu bỏ qua khi không rõ thì thêm bit `valid` tương ứng.
+- **T-201/N4:** `flat_get_num` giả định đầu vào đã qua `proto_json_valid_object`
+  (dùng trực tiếp `strtod` sẽ nhận cả chuỗi hex kiểu `0x10`).
