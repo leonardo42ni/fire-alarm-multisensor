@@ -8,6 +8,9 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `esp_reset_reason` | `esp_reset_reason_t esp_reset_reason(void);` | `components/esp_system/include/esp_system.h:85` | ESP-IDF v5.5.5 | T-002 |
 | `ESP_LOGI` | `#define ESP_LOGI(tag, format, ...) do { ESP_LOG_LEVEL_LOCAL(ESP_LOG_INFO, tag, format, ##__VA_ARGS__); } while(0)` | `components/log/include/esp_log.h:127` | ESP-IDF v5.5.5 | T-002 |
 | `nvs_flash_init` | `esp_err_t nvs_flash_init(void);` | `components/nvs_flash/include/nvs_flash.h:78` | ESP-IDF v5.5.5 | T-006 |
+| `nvs_flash_erase` | `esp_err_t nvs_flash_erase(void);` | `components/nvs_flash/include/nvs_flash.h:147` | ESP-IDF v5.5.5 | T-202 |
+| `esp_task_wdt_add` | `esp_err_t esp_task_wdt_add(TaskHandle_t task_handle);` | `components/esp_system/include/esp_task_wdt.h:90` | ESP-IDF v5.5.5 | T-202 |
+| `esp_task_wdt_reset` | `esp_err_t esp_task_wdt_reset(void);` | `components/esp_system/include/esp_task_wdt.h:118` | ESP-IDF v5.5.5 | T-202 |
 | `esp_zb_platform_config` | `esp_err_t esp_zb_platform_config(esp_zb_platform_config_t *config);` | `managed_components/espressif__esp-zigbee-lib/include/platform/esp_zigbee_platform.h:123` | esp-zigbee-lib 1.6.8 | T-006 |
 | `esp_zb_init` | `void esp_zb_init(esp_zb_cfg_t *nwk_cfg);` | `managed_components/espressif__esp-zigbee-lib/include/esp_zigbee_core.h:165` | esp-zigbee-lib 1.6.8 | T-006 |
 | `esp_zb_set_primary_network_channel_set` | `esp_err_t esp_zb_set_primary_network_channel_set(uint32_t channel_mask);` | `managed_components/espressif__esp-zigbee-lib/include/esp_zigbee_core.h:178` | esp-zigbee-lib 1.6.8 | T-006 |
@@ -57,6 +60,9 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | Tên | Định nghĩa / vị trí | File:dòng | Task dùng |
 |---|---|---|---|
 | `esp_zb_cfg_t` | struct gồm `esp_zb_role`, `install_code_policy`, `nwk_cfg.zczr_cfg` / `nwk_cfg.zed_cfg` | `esp_zigbee_core.h:81` | T-006 |
+| `esp_zb_zed_cfg_t` | `typedef struct { uint8_t ed_timeout; uint32_t keep_alive; } esp_zb_zed_cfg_t;` | `esp_zigbee_core.h:72` | T-202 |
+| `ESP_ERR_NVS_NO_FREE_PAGES` | `#define ESP_ERR_NVS_NO_FREE_PAGES (ESP_ERR_NVS_BASE + 0x0d)` | `components/nvs_flash/include/nvs.h:42` | T-202 |
+| `ESP_ERR_NVS_NEW_VERSION_FOUND` | `#define ESP_ERR_NVS_NEW_VERSION_FOUND (ESP_ERR_NVS_BASE + 0x10)` | `components/nvs_flash/include/nvs.h:46` | T-202 |
 | `esp_zb_platform_config_t` | struct gồm `radio_config`, `host_config` | `platform/esp_zigbee_platform.h:80` | T-006 |
 | `esp_zb_core_action_callback_t` | `typedef esp_err_t (*esp_zb_core_action_callback_t)(esp_zb_core_action_callback_id_t callback_id, const void *message);` | `zcl/esp_zigbee_zcl_core.h:228` | T-006 |
 | `ESP_ZB_CORE_REPORT_ATTR_CB_ID` | `= 0x2000` | `zcl/esp_zigbee_zcl_core.h:178` | T-006 |
@@ -175,3 +181,24 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
   Nếu §5.1 sau này yêu cầu bỏ qua khi không rõ thì thêm bit `valid` tương ứng.
 - **T-201/N4:** `flat_get_num` giả định đầu vào đã qua `proto_json_valid_object`
   (dùng trực tiếp `strtod` sẽ nhận cả chuỗi hex kiểu `0x10`).
+- **T-202:** `node_snapshot_t` hiện khai báo trong `firmware/node_h2/components/zb_node/include/zb_node.h`
+  đúng §5.3.6; T-106 sẽ chuyển sang `node_state.h` khi component `node_state` được làm.
+- **T-202:** giữ quy ước G0/B3 gửi `seq` qua `ESP_ZB_ZCL_ATTR_ANALOG_INPUT_APPLICATION_TYPE_ID`
+  (`0x0100`, kiểu U32) trên EP15 để Gateway tính PDR; đây không phải trường nghiệp vụ mới.
+- **T-202/C2:** `esp_zb_bdb_reset_via_local_action()` chỉ gọi trong `reset_local_cb` (Zigbee task).
+  Mọi yêu cầu reset từ task ứng dụng đi qua `zb_node_request_reset_app()`: lấy
+  `esp_zb_lock_acquire()` rồi mới gọi `esp_zb_scheduler_alarm()`, sau đó nhả khóa.
+- **T-202/C8:** EP11–15 chỉ gồm Basic + Analog Input `0x000C` + `Description`, **không** có Identify,
+  đúng §5.3.7 (Identify chỉ nằm trên EP10).
+- **T-202/C9:** `flame_do`/`prealert` được OR vào bit 3/4 của `flags` trước khi gửi EP15,
+  dùng `ZB_NODE_FLAG_FLAME_DO`/`ZB_NODE_FLAG_PREALERT` trong `zb_node_config.h` (khớp GatewayPlan §4.3).
+- **T-202/R3:** `CONFIG_ESP_TASK_WDT_TIMEOUT_S=10` > `SPIKE_REPORT_MS=3000`; khi chuyển sang
+  `REPORT_NORMAL_MS=10000` phải giữ timeout TWDT > 10 s hoặc chia nhỏ chu kỳ wake.
+- **T-202 HIL 2026-11-20:** Phase A PASS: node `REJOINED|t_ms=2408`, GW `JOIN|SA=0x46a9`,
+  8 report `seq` trong 30 s, giá trị khớp `SPIKE_*`. S5 (GW off 95 s) PASS: node
+  `ZB_SEND|FAIL`, stack `START|FAIL` backoff 5→10→20→40 s, rejoin sau 16,6 s khi GW bật lại.
+  S5b (GW off 115 s) PASS: backoff đạt `retry_ms=60000`, node `REJOINED` sau 58,2 s và report
+  đầu tiên sau 59,61 s (<60 s). Log `tests/results/g0_t202_join_*_20261120.log`,
+  `g0_s5_backoff_*_20261120.log`, `g0_s5b_backoff_*_20261120.log`. HIL đi qua nhánh stack
+  `START|FAIL` (mất parent), chưa kích hoạt riêng nhánh `tx_fail=3`/`REJOIN|REQUEST`;
+  C1–C3 đã được review code, không thay đổi sau HIL.

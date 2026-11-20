@@ -2,9 +2,20 @@
 
 - **Phase hiện tại:** Phase 2 — Giao thức & Gateway, **triển khai cuốn chiếu trước Phase 1**. Phase 1 (driver SHT31/CCS811/ADC/LED/còi) **tạm hoãn** vì chưa có driver cảm biến và driver đầu ra; `node_h2` tiếp tục dùng dữ liệu giả lập như T-006, `gw_host` mới chỉ parse UART2 + log, chưa gọi fusion/còi/LED.
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
-- **Nhánh Git:** `feat/T-201-proto-ndjson` (tách từ `master` sau Phase 0; T-003 `1670f85`; T-004 `20e2dce` + docs `fb39313`; T-005 `9f668f9` + docs `0810573`; T-006 `ceef62c`).
+- **Nhánh Git:** `feat/T-202-zb-node` (tách từ `feat/T-201-proto-ndjson`; T-201 commit `3268db6`) → chuyển `feat/gw-comm` sau commit T-202.
 - **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
-- **Task vừa hoàn thành:** `T-201` **đạt và đã commit** (review vòng 1 B1–B10, vòng 2 R1–R2/M1) — Thư viện `proto_ndjson` (NDJSON §5.1) + unit test PC (Phase 2).
+- **Task vừa hoàn thành:** `T-202` **đạt code + HIL C10** — Component `zb_node` (Spec §5.3.7) + refactor `node_h2/main` (Phase 2, dùng dữ liệu giả lập vì Phase 1 hoãn).
+  - **File:** `firmware/node_h2/components/zb_node/` gồm `zb_node.c` (publish/start, Zigbee lock, `tx_fail` + reset qua app), `zb_node_stack.c` (ED task, signal handler, backoff/reset pending), `zb_node_ep.c` (EP10–15), `include/zb_node.h` (`node_snapshot_t` §5.3.6 + API), `include/zb_node_config.h`, `zb_node_internal.h`, `CMakeLists.txt`; `node_zb_ep.c/h` cũ đã xóa.
+  - **API:** `zb_node_start()` (stack 8192, prio 5, chống double-start), `zb_node_joined()` (atomic), `zb_node_publish(const node_snapshot_t*)`; nội bộ `zb_node_request_reset_app()` chỉ dùng từ app task.
+  - **Hợp đồng §5.3.7:** ED `rx_on_when_idle=true`, all-channel mask; EP10 (Basic+Identify+Temp `0x0402`+Humidity `0x0405`), EP11–15 (Basic+Analog Input `0x000C` + `Description`, **không Identify**); publish `temp/hum` ×100 có kiểm `isfinite`/kẹp biên ZCL, analog float, OR `flame_do`/`prealert` vào `flags` bit3/4; report tới `0x0000`/EP1; `seq` qua `ApplicationType 0x0100` trên EP15 (G0/B3).
+  - **Debt T-006:** backoff 5→10→20→40→60 s; `LEAVE` clear reset-pending + rejoin, reset từ app chỉ lấy lock rồi `esp_zb_scheduler_alarm`; `FIRST_START/REBOOT` lỗi cũng retry backoff; ngưỡng tx-fail 3 (mất GW thêm ~6 s trước khi reset); N3 TWDT; N4 NVS an toàn.
+  - **Review T-202 vòng 1:** đã sửa C1–C9 + R1–R4 (C1/C2 reset dưới lock + `s_reset_pending`; C3 `3u`; C4/C5 NULL/giữ `esp_err_t`; C6 `isfinite`/kẹp biên; C7 retry start-fail; C8 bỏ Identify EP11–15; C9 flags; R1 NULL/joined/double-start; R2 stack 4096 + `ESP_ERROR_CHECK`; R3 TWDT; R4 API_NOTES/STATE).
+  - **Verify:** `idf.py -C firmware/node_h2 build` PASS (`node_h2.bin` 0x6eb10, 70% free, không warning); `.\tools\build_all.ps1` PASS 3 firmware (`gw_h2` 0x90200, `gw_host` 0x27b20); CTest `5/5` PASS; file lớn nhất `zb_node_stack.c` 190 dòng (<300), `zb_node.c` 164, `zb_node_ep.c` 158; quét H1/H4/H5/H7/H9 sạch; `esp_zb_scheduler_alarm` chỉ trong signal handler/`request_rejoin`/`request_reset_locked` (được gọi dưới lock).
+  - **HIL C10 Phase A (2026-11-20):** PASS. Node `BU|ZB_NODE|REJOINED|t_ms=2408`; GW `BU|ZB_COORD|JOIN|SA=0x46a9`; nhận đủ EP10–15 + `seq` mỗi 3 s (8 `seq` trong 30 s), giá trị khớp `SPIKE_*`. Log `tests/results/g0_t202_join_node_20261120.log`, `g0_t202_join_gw_20261120.log`.
+  - **HIL C10 S5 (2026-11-20):** PASS. Tắt GW 95 s: node `BU|ZB_SEND|FAIL`, stack `START|FAIL` backoff 5→10→20→40 s; bật lại GW, node rejoin sau **16,6 s**, report đầu tiên sau **16,6 s** (<60 s). Log `tests/results/g0_s5_backoff_*_20261120.log`.
+  - **HIL C10 S5b (2026-11-20):** PASS worst-case. Tắt GW 115 s để backoff đạt `retry_ms=60000`; bật lại GW, node `REJOINED` sau **58,2 s**, report đầu tiên sau **59,61 s** (<60 s). Log `tests/results/g0_s5b_backoff_*_20261120.log`.
+  - **Lưu ý HIL:** cả S5/S5b đi qua nhánh stack `START|FAIL` (mất parent) chứ chưa kích hoạt riêng nhánh `tx_fail=3`/`REJOIN|REQUEST`; C1–C3 đã được review code, không thay đổi sau HIL.
+- **Task trước:** `T-201` **đạt và đã commit** (review vòng 1 B1–B10, vòng 2 R1–R2/M1) — Thư viện `proto_ndjson` (NDJSON §5.1) + unit test PC (Phase 2).
   - **File:** `firmware/common/proto_ndjson.h`; implementation tách nhỏ để giữ giới hạn file: `proto_ndjson.c` (line assembler), `proto_ndjson_json.c` (scanner + `flat_*`), `proto_ndjson_dec.c` (decoder), `proto_ndjson_enc.c` (encoder), `proto_ndjson_internal.h` (hàm dùng chung nội bộ); test `tests/host/test_proto_enc.c`, `test_proto_dec.c`, `test_proto_dec_err.c`, `test_proto_asm.c`, `test_proto_common.h`.
   - **Hợp đồng §5.1:** đủ `hello/hb/join/leave/rpt` (H2→HOST) và `cmd/ack` (HOST→H2); `PROTO_MAX_LINE=256`, `PROTO_IEEE_LEN=17`; encoder trả độ dài gồm `\n` hoặc `PROTO_E_BUF` và đặt `buf[0]=0` khi lỗi; decoder cắt `\r\n`, trả `TOO_LONG/SYNTAX/TYPE/FIELD`; `rpt` chỉ in trường có bit `valid`, bỏ NaN/Inf; `line_asm_*` ghép dòng, chống tràn >255 byte.
   - **Quyết định nhỏ (không đổi hợp đồng):** `rssi/lqi` luôn in trong `rpt` (metadata liên kết, mẫu §5.1 có); `proto_enc_leave` giữ chữ ký `(buf,cap,ieee,sa)` nhưng bỏ `sa` đúng mẫu; khóa trùng → **giá trị đầu tiên** thắng; `proto_dec` chấp nhận dòng không có `\n` (line assembler mới là nơi bắt buộc `\n`).
@@ -16,7 +27,7 @@
   - **ASAN/UBSAN:** PASS với Clang 23.1.5 MSYS2 CLANG64 (`-DENABLE_SANITIZERS=ON`, `build_host_san`), 5/5 CTest pass, không báo lỗi sanitizer. Đã cài `mingw-w64-clang-x86_64-clang` + `compiler-rt` (GCC UCRT64 14.2.0 không có runtime `libasan`/`libubsan`).
   - **Firmware:** `firmware/common/CMakeLists.txt` đăng ký 4 file `.c`; `idf.py -C firmware/node_h2|gw_h2|gw_host build` → PASS, không warning; `node_h2.bin` 0x6e1c0, `gw_h2.bin` 0x90200, `gw_host.bin` 0x27b20.
   - **Chưa làm (đúng phạm vi):** chưa nối `proto_ndjson` vào `uart_bridge`/`uart_link`; chưa đụng driver Phase 1.
-- **Task tiếp theo:** `T-203` — `gw_h2/components/zb_coord` + `node_cache` (Phase 2; T-202 phụ thuộc Phase 1 đang hoãn).
+- **Task tiếp theo:** `T-203` — `gw_h2/components/zb_coord` + `node_cache` (Phase 2; T-202 đã đạt + HIL C10, bắt đầu trên `feat/gw-comm`).
   - **Phạm vi:** đọc `docs/DEV_CODING_PLAN.md` §5.4.1–§5.4.2; tách coordinator khỏi `gw_h2/main/app_main.c`, thêm component `zb_coord` (form/open/join window/reset, report callback) và `node_cache` (join/leave, map EP–cluster–attr → `rpt_t`, coalesce 300 ms, `nc_take` tăng `seq`).
   - **Hợp đồng:** giữ `q_zb_evt`/`zb_evt_t`; không đổi `proto_ndjson`; không gọi driver Phase 1.
   - **Verify PC trước:** build `gw_h2`; nếu tách logic thuần được thì thêm host test cho `node_cache`. **HIL sau:** cần 2 board ESP32-H2 (GW + node) và log report/`seq`.
@@ -71,8 +82,8 @@
   - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) đã xong ở T-201.
   - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` đã xác nhận ở T-006.
 - **Việc tiếp theo:**
-  - `T-201`: hoàn thành, đã commit; CTest 5/5 + ASAN/UBSAN 5/5 PASS, 3 firmware build PASS.
-  - `T-203`: làm tiếp Phase 2 — `gw_h2/components/zb_coord` + `node_cache` (T-202 chờ driver Phase 1). Bắt đầu bằng đọc §5.4.1–§5.4.2 và tách dần từ `gw_h2/main/app_main.c`.
+  - `T-202`: đạt code + HIL C10 (Phase A, S5, S5b backoff trần 60 s); đã commit; chuyển sang `feat/gw-comm`.
+  - `T-203`: làm tiếp Phase 2 — `gw_h2/components/zb_coord` + `node_cache`. Bắt đầu bằng đọc §5.4.1–§5.4.2 và tách dần từ `gw_h2/main/app_main.c`.
   - Phase 1 (`T-101`…) vẫn tạm hoãn đến khi có driver cảm biến/đầu ra; không include header phần cứng Phase 1 vào `node_h2`/`gw_host`.
   - Chưa cần cắm board cho T-203 phần code/build; chỉ cần 2 board ESP32-H2 khi chạy HIL cuối task.
 - **Ghi chú kỹ thuật:**

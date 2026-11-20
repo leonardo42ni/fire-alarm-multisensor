@@ -2,6 +2,7 @@
 #define NODE_H2_CONFIG_H
 
 #include "shared_config.h"
+#include "zb_node_config.h"
 
 #define FW_NAME "node_h2"
 
@@ -69,12 +70,8 @@
 #define PREALERT_CLEAR_N 3
 
 #define NODE_TRIG_QUEUE_LEN 4
-#define ZB_TASK_STACK 8192
-#define ZB_TASK_PRIO 5
-#define ZB_RETRY_MIN_MS 5000u
-#define ZB_RETRY_MAX_MS 60000u
-#define ZB_LOCK_TIMEOUT_MS 1000u
-#define ZB_REJOIN_FAIL_THRESHOLD 1u
+
+#define REPORT_TASK_STACK 4096
 
 /* T-006 G0 spike fixtures. */
 #define SPIKE_REPORT_MS REPORT_PREALERT_MS

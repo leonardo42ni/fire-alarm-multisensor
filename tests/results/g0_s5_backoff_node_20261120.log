@@ -1,0 +1,70 @@
+1795142831.170 ESP-ROM:esp32h2-20221101
+1795142831.171 Build:Nov  1 2022
+1795142831.172 rst:0x15 (USB_UART_HPSYS),boot:0x18 (SPI_FAST_FLASH_BOOT)
+1795142831.172 Saved PC:0x40013cce
+1795142831.172 SPIWP:0xee
+1795142831.172 mode:DIO, clock div:1
+1795142831.172 load:0x408460f0,len:0x16e0
+1795142831.178 load:0x4083c2d0,len:0xe70
+1795142831.180 load:0x4083efd0,len:0x2fd0
+1795142831.183 entry 0x4083c2da
+1795142831.193 I (23) boot: ESP-IDF v5.5.5 2nd stage bootloader
+1795142831.193 I (23) boot: compile time Oct 27 2026 11:45:18
+1795142831.195 I (24) boot: chip revision: v0.1
+1795142831.195 I (24) boot: efuse block revision: v0.3
+1795142831.197 I (24) boot.esp32h2: SPI Speed      : 64MHz
+1795142831.198 I (25) boot.esp32h2: SPI Mode       : DIO
+1795142831.199 I (25) boot.esp32h2: SPI Flash Size : 2MB
+1795142831.199 I (25) boot: Enabling RNG early entropy source...
+1795142831.199 I (26) boot: Partition Table:
+1795142831.201 I (26) boot: ## Label            Usage          Type ST Offset   Length
+1795142831.203 I (27) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+1795142831.204 I (27) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+1795142831.204 I (28) boot:  2 zb_storage       Unknown data     01 81 00010000 00004000
+1795142831.205 I (29) boot:  3 zb_fct           Unknown data     01 81 00014000 00000400
+1795142831.207 I (29) boot:  4 factory          factory app      00 00 00020000 00177000
+1795142831.207 I (30) boot: End of partition table
+1795142831.207 I (31) esp_image: segment 0: paddr=00020020 vaddr=42058020 size=0cd7ch ( 52604) map
+1795142831.218 I (45) esp_image: segment 1: paddr=0002cda4 vaddr=40800000 size=03274h ( 12916) load
+1795142831.218 I (50) esp_image: segment 2: paddr=00030020 vaddr=42000020 size=51e30h (335408) map
+1795142831.307 I (136) esp_image: segment 3: paddr=00081e58 vaddr=40803274 size=0a9d4h ( 43476) load
+1795142831.322 I (149) esp_image: segment 4: paddr=0008c834 vaddr=4080dc50 size=022b4h (  8884) load
+1795142831.329 I (156) boot: Loaded app from partition at offset 0x20000
+1795142831.330 I (157) boot: Disabling RNG early entropy source...
+1795142831.330 I (158) cpu_start: Unicore app
+1795142831.338 I (167) cpu_start: Pro cpu start user code
+1795142831.338 I (167) cpu_start: cpu freq: 96000000 Hz
+1795142831.340 I (167) app_init: Application information:
+1795142831.340 I (168) app_init: Project name:     node_h2
+1795142831.340 I (168) app_init: App version:      phase-0-done-4-g7c0729e-dirty
+1795142831.342 I (169) app_init: Compile time:     Nov 19 2026 16:35:32
+1795142831.344 I (169) app_init: ELF file SHA256:  bb3a7414f...
+1795142831.345 I (169) app_init: ESP-IDF:          v5.5.5
+1795142831.345 I (170) efuse_init: Min chip rev:     v0.0
+1795142831.346 I (170) efuse_init: Max chip rev:     v1.99 
+1795142831.346 I (170) efuse_init: Chip rev:         v0.1
+1795142831.347 I (171) heap_init: Initializing. RAM available for dynamic allocation:
+1795142831.348 I (171) heap_init: At 40814310 len 00039070 (228 KiB): RAM
+1795142831.350 I (171) heap_init: At 4084D380 len 00002B60 (10 KiB): RAM
+1795142831.350 I (172) heap_init: At 50000000 len 00000FE8 (3 KiB): RTCRAM
+1795142831.350 I (173) spi_flash: detected chip: gd
+1795142831.350 I (173) spi_flash: flash io: dio
+1795142831.352 W (174) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+1795142831.352 I (175) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+1795142831.352 I (176) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+1795142831.356 I (177) main_task: Started on CPU0
+1795142831.356 I (178) main_task: Calling app_main()
+1795142831.356 I (178) SNS: firmware=node_h2
+1795142831.358 I (178) SNS: version=0.1.0
+1795142831.358 I (178) SNS: reset_reason=11
+1795142831.370 I (201) phy: phy_version: 324,2, 0d8cd71, Apr 10 2026, 13:58:46
+1795142831.374 I (202) phy: libbtbb version: 8db04ea, Apr 10 2026, 13:58:59
+1795142831.396 I (218) main_task: Returned from app_main()
+1795142833.752 I (2580) ZBN: BU|ZB_NODE|REJOINED|t_ms=2408|PASS
+1795142864.407 W (33236) ZBN: BU|ZB_SEND|FAIL|status=0x01
+1795142864.408 W (33237) SNS: BU|ZB_SEND|FAIL|ESP_FAIL
+1795142881.350 W (50180) ZBN: BU|ZB_NODE|START|FAIL|ESP_FAIL|retry_ms=5000
+1795142888.674 W (57509) ZBN: BU|ZB_NODE|START|FAIL|ESP_FAIL|retry_ms=10000
+1795142901.007 W (69838) ZBN: BU|ZB_NODE|START|FAIL|ESP_FAIL|retry_ms=20000
+1795142923.336 W (92167) ZBN: BU|ZB_NODE|START|FAIL|ESP_FAIL|retry_ms=40000
+1795142965.694 I (134526) ZBN: BU|ZB_NODE|REJOINED|t_ms=134354|PASS
