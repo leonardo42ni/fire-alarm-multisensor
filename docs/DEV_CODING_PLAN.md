@@ -1,7 +1,7 @@
 # DEV_CODING_PLAN.md — Firmware & Software Implementation Plan (v2.0 Final — Thesis MVP)
 
 **System:** Wireless Multi-Sensor Early Fire Detection System using **Fuzzy Logic Data Fusion** (upgradable to ML/AI).  
-**Pipeline:** Node (`ESP32-H2`) $\rightarrow$ Zigbee 3.0 $\rightarrow$ Gateway (`ESP32-H2` Coordinator + `ESP32 WROOM-32` Host) $\rightarrow$ Edge Data Fusion (`lib_fusion`) $\rightarrow$ Local Alarm + MQTT/TLS (HiveMQ Cloud) $\rightarrow$ **Node-RED Dashboard**.
+**Pipeline:** Node (`ESP32-H2`)  Zigbee 3.0  Gateway (`ESP32-H2` Coordinator + `ESP32 WROOM-32` Host)  Edge Data Fusion (`lib_fusion`)  Local Alarm + MQTT/TLS (HiveMQ Cloud)  **Node-RED Dashboard**.
 
 | Field | Specification |
 |---|---|
@@ -63,7 +63,7 @@ Single sensor node; single test location; non-commercial power redundancy; no OT
 
 ### 1.2 Gateway (`ESP32-H2` Coordinator + `ESP32 WROOM-32` Host)
 * **Power:** Passive dual power handled purely in hardware (`5V` main adapter + `3x AA` $4.5\text{ V}$ backup battery box via Schottky diode OR-ing). **No software power monitoring.**
-* **UART Link (`115200 8N1`, NDJSON ONLY):** Cross-wired `GW-H2 TX (GPIO10)` $\rightarrow$ `WROOM RX2 (GPIO16)` and `GW-H2 RX (GPIO11)` $\leftarrow$ `WROOM TX2 (GPIO17)` (optional $220\ \Omega$ series resistors) + common `GND`. **Do NOT bridge 5V rails when both boards are plugged into PC USB.**
+* **UART Link (`115200 8N1`, NDJSON ONLY):** Cross-wired `GW-H2 TX (GPIO10)`  `WROOM RX2 (GPIO16)` and `GW-H2 RX (GPIO11)` $\leftarrow$ `WROOM TX2 (GPIO17)` (optional $220\ \Omega$ series resistors) + common `GND`. **Do NOT bridge 5V rails when both boards are plugged into PC USB.**
 
 ```text
 [GATEWAY — ESP32-H2 Coordinator <-> ESP32 WROOM-32 Host]
@@ -118,14 +118,14 @@ Supersedes `GatewayPlan.md` §4.3:
 
 **Lean File & Stop Discipline:**
 * **One `.c`/`.h` pair per new module** (flat C99, minimal boilerplate; do not split a single feature into 4–5 micro-files).
-* **Stop & Ask:** If an ESP-IDF/Zigbee API is missing from installed headers, a pin mismatches §1, or a frozen contract (`proto_ndjson.h`, `EP10–15`) needs changing $\rightarrow$ **STOP and ask**. Log tricky APIs (Zigbee, ADC calibration) in `docs/API_NOTES.md`.
+* **Stop & Ask:** If an ESP-IDF/Zigbee API is missing from installed headers, a pin mismatches §1, or a frozen contract (`proto_ndjson.h`, `EP10–15`) needs changing  **STOP and ask**. Log tricky APIs (Zigbee, ADC calibration) in `docs/API_NOTES.md`.
 * **Review Cadence:** Formal diff review once at the end of each Stage (3 reviews total) checking: Build PASS? DoD met? `R1–R7` clean? Contracts intact? `STATE.md` updated?
 
 ---
 
 ## 3. Architecture & Streamlined Repository Tree
 
-**Data Flow:** `Node (sensors)` $\xrightarrow{\text{Zigbee}}$ `GW-H2 (zb_coord -> uart_bridge)` $\xrightarrow{\text{NDJSON UART}}$ `GW-HOST (uart_link -> fusion_task -> alarm_out / CSV / MQTT)` $\rightarrow$ `Node-RED`.  
+**Data Flow:** `Node (sensors)` $\xrightarrow{\text{Zigbee}}$ `GW-H2 (zb_coord -> uart_bridge)` $\xrightarrow{\text{NDJSON UART}}$ `GW-HOST (uart_link -> fusion_task -> alarm_out / CSV / MQTT)`  `Node-RED`.  
 **Key Principle:** All Data Fusion executes on **`GW-HOST`**. Node and `GW-H2` transmit raw telemetry only.
 
 ```text
@@ -184,9 +184,9 @@ fire-alarm-multisensor/
 
 Each task targets **one MCU or one isolated logic layer** so AI sessions remain small, fast, and bug-free. End every task by updating `STATE.md` (4 lines: Completed / Command / Result / Next).
 
-> **Flexible Execution Order:** `S2-1` and `S2-2` run purely on PC (`ctest`) and can be developed in parallel with Stage 1 at any time. Within Stage 1, you may run **`S1-1` $\rightarrow$ `S1-3` $\rightarrow$ `S1-4` first** (to complete the entire Node $\rightarrow$ Gateway communication pipe using dummy data before wiring breadboard sensors in `S1-2`).
+> **Flexible Execution Order:** `S2-1` and `S2-2` run purely on PC (`ctest`) and can be developed in parallel with Stage 1 at any time. Within Stage 1, you may run **`S1-1`  `S1-3`  `S1-4` first** (to complete the entire Node  Gateway communication pipe using dummy data before wiring breadboard sensors in `S1-2`).
 
-### Stage 1 — End-to-End Data Pipeline (Week 1 $\rightarrow$ Mid Week 2)
+### Stage 1 — End-to-End Data Pipeline (Week 1  Mid Week 2)
 
 #### **`S1-1` — Finalize `T-202` (`zb_node`) & HIL Verification**
 * **Scope:** Apply the T-202 review fixes below in `firmware/node_h2/components/zb_node/`, set `REPORT_MS = 2000`, and run a 30-minute 2-board ESP32-H2 HIL test with dummy values (including one $90\text{ s}$ Gateway power-cut test).
@@ -224,14 +224,14 @@ Each task targets **one MCU or one isolated logic layer** so AI sessions remain 
 
 #### **`S1-4` — Gateway Host UART2 Link & CSV Data Logger (`gw_host` + `tools/log_csv.py`)**
 * **Scope:**
-  * Update `gw_host/main/config.h`: change `BUZZER_GPIO` to `4`, drop `PWR_SENSE`.
-  * `uart_link.h/.c`: Read `UART2` (`RX=GPIO16, TX=GPIO17, 115200 8N1`), run `line_asm_feed()` + `proto_dec()`, push `rpt_t` to `q_rpt`. Monitor `hb` ($6\text{ s}$ timeout) and minimal node table (`NODE_TIMEOUT_MS = 30000` $\rightarrow$ `NODE_OFFLINE`). Print raw `CSV,...` line (§6.1) to USB console UART0.
+  * Drop `PWR_SENSE`.
+  * `uart_link.h/.c`: Read `UART2` (`RX=GPIO16, TX=GPIO17, 115200 8N1`), run `line_asm_feed()` + `proto_dec()`, push `rpt_t` to `q_rpt`. Monitor `hb` ($6\text{ s}$ timeout) and minimal node table (`NODE_TIMEOUT_MS = 30000`  `NODE_OFFLINE`). Print raw `CSV,...` line (§6.1) to USB console UART0.
   * `tools/log_csv.py`: PC serial recorder capturing `CSV,` lines into `data/raw/<run_id>.csv` with non-blocking labeling hotkeys (§6.1).
 * **DoD:** Record 30 minutes to `data/raw/*.csv` via `log_csv.py`; continuous `seq`; loads cleanly in `pandas`. **Real sensor data collection can begin immediately after this task.**
 
 ---
 
-### Stage 2 — `lib_fusion` Core & Experimental Calibration (CORE FOCUS: Week 2 $\rightarrow$ Week 3)
+### Stage 2 — `lib_fusion` Core & Experimental Calibration (CORE FOCUS: Week 2  Week 3)
 
 #### **`S2-1` — Layer 1: Feature Extraction (`fusion_features.h/.c`)**
 * **Scope:** Implement `Med3`, `MA`, overflow-safe OLS linear regression $dT/dt$ (window $60\text{ s}$, min $3$ samples & $20\text{ s}$ span), adaptive baseline ($120\text{ s}$ init average + EMA $\tau = 600\text{ s}$, **frozen whenever `state != ST_NORMAL`**), channel validity masking, and $[0, 1]$ normalization per §5.2.
@@ -248,7 +248,7 @@ Each task targets **one MCU or one isolated logic layer** so AI sessions remain 
 #### **`S2-3` — Dataset Collection, Offline Replay & Parameter Tuning**
 * **Scope:**
   * Collect $\ge 20$ labeled runs per §7.2 using `tools/log_csv.py`.
-  * Implement `tests/host/fusion_replay.c` (reads raw CSV $\rightarrow$ runs `lib_fusion` $\rightarrow$ outputs predicted `risk, state` CSV) and `tools/eval.py` (computes §7.3 metrics comparing Fuzzy Logic against 3 fair single-sensor baselines `B1/B2/B3`).
+  * Implement `tests/host/fusion_replay.c` (reads raw CSV  runs `lib_fusion`  outputs predicted `risk, state` CSV) and `tools/eval.py` (computes §7.3 metrics comparing Fuzzy Logic against 3 fair single-sensor baselines `B1/B2/B3`).
   * Tune and freeze `fusion_params.h` using **run-level** train/validation split (never sample-level split).
 * **DoD:** Quantitative comparison table (Fuzzy vs. `B1`, `B2`, `B3`) generated; `fusion_params.h` frozen with source CSV filenames recorded in comments.
 
@@ -258,11 +258,11 @@ Each task targets **one MCU or one isolated logic layer** so AI sessions remain 
 
 ---
 
-### Stage 3 — Full System Integration & Thesis Closeout (Week 3 $\rightarrow$ Week 4)
+### Stage 3 — Full System Integration & Thesis Closeout (Week 3  Week 4)
 
 #### **`S3-1` — Gateway Host Integration (`fusion_task` + `alarm_out`)**
 * **Scope:**
-  * `fusion_task.h/.c`: Wait on `q_rpt` (timeout $1000\text{ ms}$) $\rightarrow$ `fusion_update()` + `fusion_tick()` $\rightarrow$ update system state, print full `CSV,...` line, forward telemetry/alerts to MQTT queue.
+  * `fusion_task.h/.c`: Wait on `q_rpt` (timeout $1000\text{ ms}$)  `fusion_update()` + `fusion_tick()`  update system state, print full `CSV,...` line, forward telemetry/alerts to MQTT queue.
   * `alarm_out.h/.c`: `50 ms` `vTaskDelayUntil /* periodic */` task driving BKGR RGB LED (`GPIO25/26/27` via LEDC), Active Buzzer (`GPIO4`), and Mute Button (`GPIO32`) per §6.2. First line of `app_main()` turns Buzzer and LED OFF (`R7`).
 * **DoD:** Live HIL bench test with Node using hairdryer, steam, and incense stick. LED/Buzzer reflect exact state within $\le 1\text{ s}$; press-and-release mutes both Buzzer and LED cleanly; zero buzzer chirp on MCU reset.
 
@@ -273,7 +273,7 @@ Each task targets **one MCU or one isolated logic layer** so AI sessions remain 
 * **DoD:** Node-RED Dashboard updates live; Wi-Fi disconnect/reconnect recovers automatically; local `lib_fusion`, LED, and Buzzer continue operating normally while offline. *(Ensure fresh Wi-Fi/HiveMQ credentials per Risk `K6`.)*
 
 #### **`S3-3` — Held-Out Final Experiments, Demo Video & Thesis Report**
-* **Scope:** Run complete end-to-end tests on **unseen validation runs** (not used during `S2-3` tuning), measure Node $\rightarrow$ Node-RED latency, film demo video, compile final metrics (G0 network stats + §7.3 fusion tables + Limitations section), and tag `v2.0.0`.
+* **Scope:** Run complete end-to-end tests on **unseen validation runs** (not used during `S2-3` tuning), measure Node  Node-RED latency, film demo video, compile final metrics (G0 network stats + §7.3 fusion tables + Limitations section), and tag `v2.0.0`.
 * **DoD:** Final comparison tables, confusion matrix, demo video, and `v2.0.0` Git tag complete.
 
 **Suggested 4-Week Schedule:** Week 1: `S1-1`, `S1-2`, `S2-1` $\cdot$ Week 2: `S1-3`, `S1-4`, `S2-2`, start CSV collection $\cdot$ Week 3: `S2-3`, `S3-1`, `S3-2` $\cdot$ Week 4: `S3-3`, optional `S2-4`, buffer. *(If Stage 1 slips, reduce run count in `S2-3` slightly — never cut the quantitative evaluation.)*
@@ -328,9 +328,9 @@ typedef struct {
 } feat_t;
 ```
 
-| Feature | Computation (Placeholder defaults; tuned in `S2-3`) | Norm `lo` $\rightarrow$ `hi` |
+| Feature | Computation (Placeholder defaults; tuned in `S2-3`) | Norm `lo`  `hi` |
 |---|---|---|
-| `F_T_D` | $T_{\text{filt}} - T_{\text{base}}$ (Med3 $\rightarrow$ EMA) | $2 \rightarrow 20\ ^\circ\text{C}$ |
+| `F_T_D` | $T_{\text{filt}} - T_{\text{base}}$ (Med3  EMA) | $2 \rightarrow 20\ ^\circ\text{C}$ |
 | `F_T_RATE` | OLS linear regression over $60\text{ s}$ window ($\ge 3$ samples, $\ge 20\text{ s}$ span), $^\circ\text{C}/\text{min}$ | $1 \rightarrow 10\ ^\circ\text{C}/\text{min}$ |
 | `F_HUM_D` | $\max(0,\ RH - RH_{\text{base}})$ (Steam raises RH; fire lowers RH) | $2 \rightarrow 15\ \%\text{RH}$ |
 | `F_SMOKE` | $(V_{\text{mq2,MA5}} - V_{\text{mq2,base}}) / V_{\text{mq2,base}}$ | $0.1 \rightarrow 0.8$ |
@@ -338,7 +338,7 @@ typedef struct {
 | `F_FLAME` | $(V_{\text{fl,base}} - V_{\text{fl,MA5}}) / V_{\text{fl,base}}$ (flip sign if `FLAME_AO_INVERTED`); `NODE_FLAG_FLAME_DO` forces `n = 1.0` | $0.1 \rightarrow 0.5$ |
 
 * **Adaptive Baseline:** Average first `BASE_INIT_S = 120 s`, then track via slow EMA (`BASE_TAU_S = 600 s`). **Update ONLY when `state == ST_NORMAL`** (freeze immediately on any elevation).
-* **Warmup & Missing Channels:** If `NODE_FLAG_MQ2_WARM` or `NODE_FLAG_GAS_BAD` is set, or baseline is uninitialized $\rightarrow$ set `warmup = true`, clear corresponding `valid` bits, hold `ST_NORMAL`. If `F_T_D` is invalid OR all three (`F_SMOKE`, `F_ECO2_D`, `F_TVOC_D`) are invalid $\rightarrow$ `insufficient = true` and hold current state.
+* **Warmup & Missing Channels:** If `NODE_FLAG_MQ2_WARM` or `NODE_FLAG_GAS_BAD` is set, or baseline is uninitialized  set `warmup = true`, clear corresponding `valid` bits, hold `ST_NORMAL`. If `F_T_D` is invalid OR all three (`F_SMOKE`, `F_ECO2_D`, `F_TVOC_D`) are invalid  `insufficient = true` and hold current state.
 * **Derived Gas Linguistic Input:** $G = \max(n[\text{ECO2\_D}],\ n[\text{TVOC\_D}])$ (since CCS811 estimates $\text{eCO}_2$ directly from VOCs; document this correlation in thesis).
 
 ### 5.3 Layer 2 — Pluggable Inference Engine (`fusion_infer.h`, `infer_fuzzy.c`)
@@ -404,13 +404,13 @@ extern const infer_engine_t INFER_FUZZY;
 * **Hysteresis (De-escalation):** Threshold $-$ `10` (`15 / 40 / 65`).
 * **Confirmation Counters:** `N_UP = 2` consecutive reports to escalate; `N_DOWN = 5` consecutive reports to step down **one level at a time**.
 * **FIRE Latch:** Hold `ST_FIRE` until `risk < 25` continuously for `LATCH_CLEAR_S = 60 s` (tracked via `fusion_tick()`).
-* **Hard Safety Net (Engine-Independent):** Raw `temp >= T_HARD_C` ($65^\circ\text{C}$) for `2` consecutive reports $\rightarrow$ immediate `ST_FIRE`.
+* **Hard Safety Net (Engine-Independent):** Raw `temp >= T_HARD_C` ($65^\circ\text{C}$) for `2` consecutive reports  immediate `ST_FIRE`.
 
 ---
 
 ## 6. CSV Telemetry Format & Local Alarm Behavior
 
-### 6.1 Gateway Serial CSV Format (`gw_host` $\rightarrow$ `tools/log_csv.py`)
+### 6.1 Gateway Serial CSV Format (`gw_host`  `tools/log_csv.py`)
 `gw_host` prints one prefixed CSV line per report on USB console UART0:
 ```text
 CSV,t_ms,node,seq,temp,hum,eco2,tvoc,mq2_mv,flame_mv,flags,rssi,lqi,n_T,n_R,n_S,n_G,n_F,n_H,risk,state
@@ -441,7 +441,7 @@ CSV,t_ms,node,seq,temp,hum,eco2,tvoc,mq2_mv,flame_mv,flags,rssi,lqi,n_T,n_R,n_S,
 * **Detection Time:** $t_{\text{detect}} = t(\text{state} \ge \text{WARNING}) - t_{\text{ignite}}$ (marked by hotkey `i`). Do not claim "prediction before ignition" — measure strictly from ignition.
 * **False Alarm Definition:** Any run reaching `state >= WARNING` during a nuisance (`u`) or ambient (`n`) session.
 
-### 7.2 Experimental Runs ($\ge 20$ runs; $\sim 10\text{ min/run}$: $3\text{ min}$ baseline $\rightarrow$ stimulus $\rightarrow$ $5\text{ min}$ recovery)
+### 7.2 Experimental Runs ($\ge 20$ runs; $\sim 10\text{ min/run}$: $3\text{ min}$ baseline  stimulus  $5\text{ min}$ recovery)
 Conduct in a ventilated area with fireproof tray, water/extinguisher, minimal fuel, adult supervision, fixed measured Node distance, and full sensor warmup (`BENCH_MODE = 0`).
 
 | Group | Scenario | Min Runs | Label |

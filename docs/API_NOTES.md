@@ -54,6 +54,19 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `esp_err_to_name` | `const char *esp_err_to_name(esp_err_t code);` | `components/esp_common/include/esp_err.h:58` | ESP-IDF v5.5.5 | T-006 |
 | `vTaskDelayUntil` | `#define vTaskDelayUntil(pxPreviousWakeTime, xTimeIncrement) do { (void)xTaskDelayUntil((pxPreviousWakeTime), (xTimeIncrement)); } while (0)` (macro, dòng 905–908) | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:905` | ESP-IDF v5.5.5 | T-006 |
 | `xTaskCreate` | `BaseType_t xTaskCreate(TaskFunction_t pxTaskCode, const char * const pcName, const configSTACK_DEPTH_TYPE usStackDepth, void * const pvParameters, UBaseType_t uxPriority, TaskHandle_t * const pxCreatedTask) PRIVILEGED_FUNCTION` | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:371` | ESP-IDF v5.5.5 | T-006 |
+| `uart_param_config` | `esp_err_t uart_param_config(uart_port_t uart_num, const uart_config_t *uart_config);` | `components/esp_driver_uart/include/driver/uart.h:473` | ESP-IDF v5.5.5 | S1-3 |
+| `uart_set_pin` | `esp_err_t uart_set_pin(uart_port_t uart_num, int tx_io_num, int rx_io_num, int rts_io_num, int cts_io_num);` | `components/esp_driver_uart/include/driver/uart.h:423` | ESP-IDF v5.5.5 | S1-3 |
+| `uart_driver_install` | `esp_err_t uart_driver_install(uart_port_t uart_num, int rx_buffer_size, int tx_buffer_size, int queue_size, QueueHandle_t* uart_queue, int intr_alloc_flags);` | `components/esp_driver_uart/include/driver/uart.h:121` | ESP-IDF v5.5.5 | S1-3 |
+| `uart_driver_delete` | `esp_err_t uart_driver_delete(uart_port_t uart_num);` | `components/esp_driver_uart/include/driver/uart.h:132` | ESP-IDF v5.5.5 | S1-3 |
+| `uart_write_bytes` | `int uart_write_bytes(uart_port_t uart_num, const void* src, size_t size);` | `components/esp_driver_uart/include/driver/uart.h:533` | ESP-IDF v5.5.5 | S1-3 |
+| `uart_read_bytes` | `int uart_read_bytes(uart_port_t uart_num, void* buf, uint32_t length, TickType_t ticks_to_wait);` | `components/esp_driver_uart/include/driver/uart.h:569` | ESP-IDF v5.5.5 | S1-3 |
+| `xQueueCreate` | `#define xQueueCreate( uxQueueLength, uxItemSize ) xQueueGenericCreate( ( uxQueueLength ), ( uxItemSize ), ( queueQUEUE_TYPE_BASE ) )` | `components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:149` | ESP-IDF v5.5.5 | S1-3 |
+| `xQueueSend` | `#define xQueueSend( xQueue, pvItemToQueue, xTicksToWait ) \` (macro, dòng 469–471) | `components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:469` | ESP-IDF v5.5.5 | S1-3 |
+| `xQueueReceive` | `BaseType_t xQueueReceive( QueueHandle_t xQueue, void * const pvBuffer, TickType_t xTicksToWait ) PRIVILEGED_FUNCTION;` | `components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:825` | ESP-IDF v5.5.5 | S1-3 |
+| `vQueueDelete` | `void vQueueDelete( QueueHandle_t xQueue ) PRIVILEGED_FUNCTION;` | `components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:864` | ESP-IDF v5.5.5 | S1-3 |
+| `vTaskDelete` | `void vTaskDelete( TaskHandle_t xTaskToDelete ) PRIVILEGED_FUNCTION;` | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:785` | ESP-IDF v5.5.5 | S1-3 |
+| `esp_zb_ieee_address_by_short` | `esp_err_t esp_zb_ieee_address_by_short(uint16_t short_addr, uint8_t *ieee_addr);` | `managed_components/espressif__esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h:304` | esp-zigbee-lib 1.6.8 | S1-3 |
+| `esp_zb_address_short_by_ieee` | `uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);` | `managed_components/espressif__esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h:293` | esp-zigbee-lib 1.6.8 | S1-3 |
 
 ## Kiểu dữ liệu / hằng số đã xác minh
 
@@ -134,6 +147,30 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_MAXIMUM` | `#define ... ((int16_t)0x7fff)` | `zcl/esp_zigbee_zcl_temperature_meas.h:33` | T-006 |
 | `ESP_ZB_ZCL_REL_HUMIDITY_MEASUREMENT_MIN_MEASURED_VALUE_MINIMUM` | `#define ... ((uint16_t)0x0000)` | `zcl/esp_zigbee_zcl_humidity_meas.h:24` | T-006 |
 | `ESP_ZB_ZCL_REL_HUMIDITY_MEASUREMENT_MAX_MEASURED_VALUE_MAXIMUM` | `#define ... ((uint16_t)0x2710)` | `zcl/esp_zigbee_zcl_humidity_meas.h:33` | T-006 |
+| `uart_config_t` | struct gồm `baud_rate`, `data_bits`, `parity`, `stop_bits`, `flow_ctrl`, `rx_flow_ctrl_thresh`, union `source_clk`/`lp_source_clk`, `flags` | `components/esp_driver_uart/include/driver/uart.h:35` | S1-3 |
+| `UART_NUM_1` | `UART_NUM_1,` (enum `uart_port_t`) | `components/hal/include/hal/uart_types.h:24` | S1-3 |
+| `UART_DATA_8_BITS` | `= 0x3` | `components/hal/include/hal/uart_types.h:60` | S1-3 |
+| `UART_STOP_BITS_1` | `= 0x1` | `components/hal/include/hal/uart_types.h:68` | S1-3 |
+| `UART_PARITY_DISABLE` | `= 0x0` | `components/hal/include/hal/uart_types.h:78` | S1-3 |
+| `UART_HW_FLOWCTRL_DISABLE` | `= 0x0` | `components/hal/include/hal/uart_types.h:87` | S1-3 |
+| `UART_SCLK_DEFAULT` | `= SOC_MOD_CLK_PLL_F48M` | `components/soc/esp32h2/include/soc/clk_tree_defs.h:252` | S1-3 |
+| `UART_PIN_NO_CHANGE` | `#define UART_PIN_NO_CHANGE (-1)` | `components/esp_driver_uart/include/driver/uart.h:23` | S1-3 |
+| `portMUX_TYPE` | `typedef spinlock_t portMUX_TYPE;` | `components/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos/portmacro.h:201` | S1-3 |
+| `portMUX_INITIALIZER_UNLOCKED` | `#define portMUX_INITIALIZER_UNLOCKED SPINLOCK_INITIALIZER` | `components/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos/portmacro.h:203` | S1-3 |
+| `taskENTER_CRITICAL` | `#define taskENTER_CRITICAL( x ) portENTER_CRITICAL( x )` | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:236` | S1-3 |
+| `taskEXIT_CRITICAL` | `#define taskEXIT_CRITICAL( x ) portEXIT_CRITICAL( x )` | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:250` | S1-3 |
+| `pdMS_TO_TICKS` | `#define pdMS_TO_TICKS( xTimeInMs ) ( ( TickType_t ) ( ( ( TickType_t ) ( xTimeInMs ) * ( TickType_t ) configTICK_RATE_HZ ) / ( TickType_t ) 1000U ) )` | `components/freertos/FreeRTOS-Kernel/include/freertos/projdefs.h:46` | S1-3 |
+| `esp_zb_zcl_addr_t` | struct `{ uint8_t addr_type; union { uint16_t short_addr; uint32_t src_id; esp_zb_ieee_addr_t ieee_addr; } u; }` | `esp_zigbee_type.h:80` | S1-3 |
+| `ESP_ZB_ZCL_ADDR_TYPE_SHORT` | `= 0U` | `esp_zigbee_type.h:41` | S1-3 |
+| `ESP_ZB_ZDO_SIGNAL_LEAVE_INDICATION` | `= 0x13` | `zdo/esp_zigbee_zdo_common.h:346` | S1-3 |
+| `esp_zb_zdo_signal_leave_indication_params_t` | struct `{ uint16_t short_addr; esp_zb_ieee_addr_t device_addr; uint8_t rejoin; }` | `zdo/esp_zigbee_zdo_common.h:662` | S1-3 |
+| `esp_zb_zczr_cfg_t` | `typedef struct { uint8_t max_children; } esp_zb_zczr_cfg_t;` | `esp_zigbee_core.h:64` | S1-3 |
+| `esp_zb_ieee_addr_t` | `typedef esp_zb_64bit_addr_t esp_zb_ieee_addr_t;` (`uint8_t[8]`, little-endian: `[0]`=LSB, `[7]`=MSB) | `esp_zigbee_type.h:20` | S1-3 |
+| `esp_zb_zcl_attribute_data_t` | struct `{ esp_zb_zcl_attr_type_t type; uint16_t size; void *value; } ESP_ZB_PACKED_STRUCT` | `zcl/esp_zigbee_zcl_common.h:297` | S1-3 |
+| `ESP_ZB_ZCL_ADDR_TYPE_IEEE` | `= 3U` | `esp_zigbee_type.h:44` | S1-3 |
+| `ESP_ZB_ZDO_SIGNAL_DEVICE_UPDATE` | `= 0x30` | `zdo/esp_zigbee_zdo_common.h:447` | S1-3 |
+| `esp_zb_zdo_signal_device_update_params_t` | struct `{ esp_zb_ieee_addr_t long_addr; uint16_t short_addr; uint8_t status; uint8_t tc_action; uint16_t parent_short; }` | `zdo/esp_zigbee_zdo_common.h:690` | S1-3 |
+| `ESP_ZB_ZDO_STANDARD_DEV_LEFT` | `= 0x02U` (enum `esp_zb_zdo_update_dev_status_t`) | `zdo/esp_zigbee_zdo_common.h:645` | S1-3 |
 
 ## Ghi chú xác minh
 
@@ -202,3 +239,11 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
   `g0_s5_backoff_*_20261120.log`, `g0_s5b_backoff_*_20261120.log`. HIL đi qua nhánh stack
   `START|FAIL` (mất parent), chưa kích hoạt riêng nhánh `tx_fail=3`/`REJOIN|REQUEST`;
   C1–C3 đã được review code, không thay đổi sau HIL.
+- **S1-3 (2026-11-20):** `gw_h2` tách thành đúng 2 component `zb_coord` + `uart_bridge`
+  (mỗi component 1 cặp `.c/.h`), `main/app_main.c` chỉ còn `nvs_flash_init()` →
+  `zb_coord_start()` → `uart_bridge_start()`.
+- **S1-3 UART:** `UART_NUM_1`, TX=GPIO10, RX=GPIO11, 115200 8N1, RX/TX buffer 1024;
+  log vẫn đi USB-Serial-JTAG (`CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y`) nên không lẫn vào UART1.
+- **S1-3 Zigbee callback:** `ESP_ZB_CORE_REPORT_ATTR_CB_ID` kiểm `attribute.data.value != NULL` và `attribute.data.size`, dùng `memcpy` từ `ESP_ZB_PACKED_STRUCT` (`S16/U16/U32/SINGLE`) vào `zb_evt_t` rồi `xQueueSend(..., 0)`; mọi UART/`ESP_LOGx` nằm ở task `uart_bridge`. Hỗ trợ cả `ESP_ZB_ZCL_ADDR_TYPE_SHORT` (kèm fallback `esp_zb_ieee_address_by_short` khi GW reboot mà Node vẫn còn trong NVS) và `ESP_ZB_ZCL_ADDR_TYPE_IEEE` (`esp_zb_address_short_by_ieee`). `LEAVE_INDICATION` (`0x13`) và `DEVICE_UPDATE` (`0x30`, `DEV_LEFT`, khử trùng qua cache) xóa cache và gửi `leave`; `ESP_ZB_ZDO_SIGNAL_LEAVE` xóa sạch cache và log.
+- **S1-3 IEEE byte order:** Đã xác minh trong `nwk/esp_zigbee_nwk.h:221,299`, `zb_address.h:140-143`, `zb_trace.h:513,528`: `esp_zb_ieee_addr_t` là little-endian (`[0]`=LSB, `[7]`=MSB), nên format `[7]..[0]` ra 16 hex MSB-first khớp `proto_ndjson.h`.
+- **S1-3 build & COM5 boot:** `.\tools\build_all.ps1` PASS cả 3 firmware (`gw_h2.bin` `0x9b710`, 59% free, không warning); `ctest` 5/5 PASS; flash & monitor USB-Serial-JTAG `COM5` PASS (`FORMED|PAN=0x1a62|CH=25|SA=0x0000|PASS`, `PERMIT|OPEN|sec=180`, `START|UART1|TX=10|RX=11`). DoD 1 giờ với Node + đo trực tiếp UART1 (`GPIO10`/`GPIO11`) đang chờ gắn đủ 2 board / `gw_host`.

@@ -2,9 +2,13 @@
 
 - **Phase hiện tại:** Phase 2 — Giao thức & Gateway, **triển khai cuốn chiếu trước Phase 1**. Phase 1 (driver SHT31/CCS811/ADC/LED/còi) **tạm hoãn** vì chưa có driver cảm biến và driver đầu ra; `node_h2` tiếp tục dùng dữ liệu giả lập như T-006, `gw_host` mới chỉ parse UART2 + log, chưa gọi fusion/còi/LED.
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
-- **Nhánh Git:** `feat/T-202-zb-node` (tách từ `feat/T-201-proto-ndjson`; T-201 commit `3268db6`) → chuyển `feat/gw-comm` sau commit T-202.
+- **Nhánh Git:** `feat/S3-1-gw-h2-bridge` (tách từ `feat/T-202-zb-node`; T-201 commit `3268db6`, T-202 commit `ed75f05`).
 - **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
-- **Task vừa hoàn thành:** `T-202` **đạt code + HIL C10** — Component `zb_node` (Spec §5.3.7) + refactor `node_h2/main` (Phase 2, dùng dữ liệu giả lập vì Phase 1 hoãn).
+- **Task vừa hoàn thành:** `S1-3` / `T-203` **đạt code + build + flash/boot `COM5`** — Gateway coordinator + UART1 NDJSON bridge (`gw_h2`), chờ HIL 2 board 1 giờ + đo UART1.
+  - **File:** `firmware/gw_h2/components/zb_coord/{zb_coord.c,include/zb_coord.h}`, `firmware/gw_h2/components/uart_bridge/{uart_bridge.c,include/uart_bridge.h}`, `main/app_main.c`, `main/CMakeLists.txt`, `docs/API_NOTES.md`.
+  - **Hợp đồng S1-3:** ZCZR kênh 25/PAN `0x1A62`, mở join window 180 s, cache `short_addr ↔ ieee` (quét toàn bảng chống trùng SA/IEEE) kèm fallback `esp_zb_ieee_address_by_short` sau reboot GW + hỗ trợ `ADDR_TYPE_IEEE` + `DEVICE_UPDATE` (`DEV_LEFT`) + retry `FIRST_START/REBOOT` và tái lập mạng khi `SIGNAL_LEAVE` (`OP_RESET_NET`) + kiểm `size`/`memcpy`; bridge hợp nhất `slot->rpt.ieee`, map EP10–EP15 → `rpt_t` (kẹp `isfinite` cho `flags`), phát 1 `proto_enc_rpt` khi `seq` tới hoặc sau 300 ms, `hello` (chỉ sau `xTaskCreate`)/`hb` (2000 ms)/`join`/`leave`, nhận `ping`/`permit_join`/`reset_net` qua `line_asm_feed` + `proto_dec`.
+  - **Verify:** `.\tools\build_all.ps1` PASS 3 firmware (`gw_h2.bin` `0x9b710`, 59% free, 0 warning); `ctest` 5/5 PASS; probe Clang ASAN/UBSAN PASS; flash & monitor `COM5` PASS (`FORMED|PAN=0x1a62|CH=25|SA=0x0000|PASS`, `PERMIT|OPEN|sec=180`, `START|UART1|TX=10|RX=11`, không panic/TWDT). **Bước kế:** HIL 2 board Node+GW 1 giờ (PDR ≤ 3%) + kiểm tra UART1 GPIO10/11 → `S1-4`.
+- **Task trước:** `T-202` **đạt code + HIL C10** — Component `zb_node` (Spec §5.3.7) + refactor `node_h2/main` (Phase 2, dùng dữ liệu giả lập vì Phase 1 hoãn).
   - **File:** `firmware/node_h2/components/zb_node/` gồm `zb_node.c` (publish/start, Zigbee lock, `tx_fail` + reset qua app), `zb_node_stack.c` (ED task, signal handler, backoff/reset pending), `zb_node_ep.c` (EP10–15), `include/zb_node.h` (`node_snapshot_t` §5.3.6 + API), `include/zb_node_config.h`, `zb_node_internal.h`, `CMakeLists.txt`; `node_zb_ep.c/h` cũ đã xóa.
   - **API:** `zb_node_start()` (stack 8192, prio 5, chống double-start), `zb_node_joined()` (atomic), `zb_node_publish(const node_snapshot_t*)`; nội bộ `zb_node_request_reset_app()` chỉ dùng từ app task.
   - **Hợp đồng §5.3.7:** ED `rx_on_when_idle=true`, all-channel mask; EP10 (Basic+Identify+Temp `0x0402`+Humidity `0x0405`), EP11–15 (Basic+Analog Input `0x000C` + `Description`, **không Identify**); publish `temp/hum` ×100 có kiểm `isfinite`/kẹp biên ZCL, analog float, OR `flame_do`/`prealert` vào `flags` bit3/4; report tới `0x0000`/EP1; `seq` qua `ApplicationType 0x0100` trên EP15 (G0/B3).
@@ -27,10 +31,9 @@
   - **ASAN/UBSAN:** PASS với Clang 23.1.5 MSYS2 CLANG64 (`-DENABLE_SANITIZERS=ON`, `build_host_san`), 5/5 CTest pass, không báo lỗi sanitizer. Đã cài `mingw-w64-clang-x86_64-clang` + `compiler-rt` (GCC UCRT64 14.2.0 không có runtime `libasan`/`libubsan`).
   - **Firmware:** `firmware/common/CMakeLists.txt` đăng ký 4 file `.c`; `idf.py -C firmware/node_h2|gw_h2|gw_host build` → PASS, không warning; `node_h2.bin` 0x6e1c0, `gw_h2.bin` 0x90200, `gw_host.bin` 0x27b20.
   - **Chưa làm (đúng phạm vi):** chưa nối `proto_ndjson` vào `uart_bridge`/`uart_link`; chưa đụng driver Phase 1.
-- **Task tiếp theo:** `T-203` — `gw_h2/components/zb_coord` + `node_cache` (Phase 2; T-202 đã đạt + HIL C10, bắt đầu trên `feat/gw-comm`).
-  - **Phạm vi:** đọc `docs/DEV_CODING_PLAN.md` §5.4.1–§5.4.2; tách coordinator khỏi `gw_h2/main/app_main.c`, thêm component `zb_coord` (form/open/join window/reset, report callback) và `node_cache` (join/leave, map EP–cluster–attr → `rpt_t`, coalesce 300 ms, `nc_take` tăng `seq`).
-  - **Hợp đồng:** giữ `q_zb_evt`/`zb_evt_t`; không đổi `proto_ndjson`; không gọi driver Phase 1.
-  - **Verify PC trước:** build `gw_h2`; nếu tách logic thuần được thì thêm host test cho `node_cache`. **HIL sau:** cần 2 board ESP32-H2 (GW + node) và log report/`seq`.
+- **Task tiếp theo:** `S1-3` HIL 1 giờ (2 board ESP32-H2) → `S1-4` (`gw_host` UART2 link + CSV logger).
+  - **HIL S1-3:** nạp `node_h2` + `gw_h2`, chạy 1 giờ, đếm đúng 1 `rpt`/chu kỳ node, `seq` tăng đơn điệu, mất ≤ 3%, không log bleed lên UART1.
+  - **S1-4:** `docs/DEV_CODING_PLAN.md` §S1-4; đổi `BUZZER_GPIO` → 4, bỏ `PWR_SENSE`, thêm `uart_link` + `tools/log_csv.py`.
 - **Task trước:** `T-006` — Spike G0 Zigbee (coordinator + end device, fake EP10–EP15).
   - **Code:** `firmware/gw_h2/main/app_main.c` (ZC, PAN `0x1A62`, channel 25, EP1, report callback); `firmware/node_h2/main/app_main.c` (ED, steering, EP10 temp/humidity + EP11–EP15 analog input, report 3 s); fixture trong `firmware/node_h2/main/config.h`.
   - **Dependency:** thêm `firmware/gw_h2/main/idf_component.yml` và `firmware/node_h2/main/idf_component.yml` (`espressif/esp-zigbee-lib ^1.6.0`, `espressif/esp-zboss-lib ^1.6.0`); lock thực tế `esp-zigbee-lib 1.6.8`, `esp-zboss-lib 1.6.4`; `idf.py reconfigure` cho `gw_h2` đã fetch thành công.
@@ -82,10 +85,10 @@
   - **Lưu ý:** `secrets.h` là file cục bộ đã git-ignore, hiện chứa giá trị mẫu; phải điền WiFi/MQTT thật trước khi chạy HIL. `fusion_params.h` (§5.2.3) để T-303; `proto_ndjson.h` (§5.1) đã xong ở T-201.
   - **Kế thừa T-002:** 3 firmware build được; `secrets.h` không bị track; `CONFIG_ZB_*` đã xác nhận ở T-006.
 - **Việc tiếp theo:**
-  - `T-202`: đạt code + HIL C10 (Phase A, S5, S5b backoff trần 60 s); đã commit; chuyển sang `feat/gw-comm`.
-  - `T-203`: làm tiếp Phase 2 — `gw_h2/components/zb_coord` + `node_cache`. Bắt đầu bằng đọc §5.4.1–§5.4.2 và tách dần từ `gw_h2/main/app_main.c`.
+  - `S1-3` HIL: nạp `node_h2` + `gw_h2`, chạy 1 giờ, kiểm tra đúng 1 `rpt`/chu kỳ node, `seq` tăng đơn điệu, mất ≤ 3%, không log bleed lên UART1.
+  - `S1-4`: `gw_host` UART2 link + CSV logger; đổi `BUZZER_GPIO` → 4, bỏ `PWR_SENSE`.
   - Phase 1 (`T-101`…) vẫn tạm hoãn đến khi có driver cảm biến/đầu ra; không include header phần cứng Phase 1 vào `node_h2`/`gw_host`.
-  - Chưa cần cắm board cho T-203 phần code/build; chỉ cần 2 board ESP32-H2 khi chạy HIL cuối task.
+  - Code/build S1-3 đã xong; chỉ cần 2 board ESP32-H2 khi chạy HIL cuối task.
 - **Ghi chú kỹ thuật:**
   - Target: `node_h2`/`gw_h2` = `esp32h2`; `gw_host` = `esp32`.
   - `esp_reset_reason()` và macro `ESP_LOGI` đã được đối chiếu chữ ký trên bản cài thật v5.5.5 và ghi vào `docs/API_NOTES.md`.
