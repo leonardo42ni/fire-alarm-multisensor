@@ -39,3 +39,13 @@ Bias toward **simplicity, flat C, and Happy Path stability** (this is an undergr
 2. **Protect Tests:** Never modify, delete, or loosen assertions in `tests/host/` to make tests pass. Fix application code or report failure.
 3. **Real Verification:** Never claim "done" without running `tools/build_all.ps1` / `idf.py build` or `ctest` and pasting actual output. For hardware-dependent tasks without a board attached, state: *"Build/CTest passed, awaiting HIL check."*
 4. **Closeout:** Update `STATE.md`, clear `review.md` (if fixing review issues), and remind the user to run `.\export_diff.ps1`.
+
+## 4. # Agent Rules — Fire Alarm IoT (v2.0 Final Thesis MVP)
+
+1. **Single Source of Truth:** `docs/DEV_CODING_PLAN.md` (v2.0 Final) overrides `GatewayPlan.md` and `GW_SCHEMATIC_SPEC.md` on all conflicts (GPIO4 buzzer, GPIO32 simple mute, no PWR_SENSE, no bringup/, fixed 2 s report, Node-RED dashboard).
+2. **Context Recovery:** Read `STATE.md` and `review.md` first. Read ONLY the task-relevant sections of `docs/DEV_CODING_PLAN.md`. `_ref_*/` is strictly read-only.
+3. **Frozen Contracts:** Never break `firmware/common/proto_ndjson.h` or Zigbee `EP10–EP15` mapping without explicit user approval.
+4. **Lean Flat C:** Execute one atomic task at a time; touch ONLY files listed in the prompt. Pack each new module into a SINGLE `.c`/`.h` pair with minimal boilerplate — do not split features into micro-files.
+5. **Toolchain & Hard Rules (R1–R7):** ESP-IDF 5.5.5 CLI (`idf.py`) + CMake/CTest only. No busy-wait/long `vTaskDelay()`, no `sprintf`/`strcpy`/`strcat`/`gets`, no `malloc`/logging in ISR, no secrets in Git, no magic numbers outside `config.h`/`shared_config.h`/`fusion_params.h`, set Buzzer (GPIO4) and RGB LED (25/26/27) OFF first in `gw_host` `app_main()`.
+6. **Zero Hallucinations:** Verify unfamiliar ESP-IDF/Zigbee APIs in installed headers and log in `docs/API_NOTES.md`. If missing or uncertain -> STOP and ask.
+7. **Verification Gate:** Never alter tests to pass. Never report done without running `ctest` and/or `.\tools\build_all.ps1` and pasting actual output. If no board is attached, state: *"Build/CTest passed, awaiting HIL check."* Update `STATE.md` (4 lines) on closeout.

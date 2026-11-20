@@ -33,7 +33,7 @@ khi kiểm HIL (T-001 và các task bring-up).
 | LED RGB — R | 25 | DEV_CODING_PLAN §1.7 (X2) | Chưa |
 | LED RGB — G | 26 | DEV_CODING_PLAN §1.7 (X2) | Chưa |
 | LED RGB — B | 27 | DEV_CODING_PLAN §1.7 (X2) | Chưa |
-| Còi (qua NPN) | 33 | DEV_CODING_PLAN §1.7 (X3), §1.7.1 | Chưa |
+| Còi (qua NPN) | 4 | DEV_CODING_PLAN §1.7 (X3), §1.7.1 | Chưa |
 | Nút mute/test | 32 | DEV_CODING_PLAN §5.5.5c | Chưa |
 | PWR_SENSE (ADC1) | 35 | DEV_CODING_PLAN §5.5.6 | Chưa |
 
