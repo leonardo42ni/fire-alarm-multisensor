@@ -2,7 +2,7 @@
 
 - **Phase hiện tại:** Phase 2 — Giao thức & Gateway, **triển khai cuốn chiếu trước Phase 1**. Phase 1 (driver SHT31/CCS811/ADC/LED/còi) **tạm hoãn** vì chưa có driver cảm biến và driver đầu ra; `node_h2` tiếp tục dùng dữ liệu giả lập như T-006, `gw_host` mới chỉ parse UART2 + log, chưa gọi fusion/còi/LED.
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
-- **Nhánh Git:** `feat/S3-1-gw-h2-bridge` (tách từ `feat/T-202-zb-node`; T-201 commit `3268db6`, T-202 commit `ed75f05`).
+- **Nhánh Git:** `feat/S1-4-gw-host-uart-csv` (tách từ `master` sau khi merge `S1-3` / `feat/S3-1-gw-h2-bridge`; T-201 commit `3268db6`, T-202 commit `ed75f05`).
 - **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
 - **Task vừa hoàn thành:** `S1-3` / `T-203` **đạt code + build + flash/boot `COM5`** — Gateway coordinator + UART1 NDJSON bridge (`gw_h2`), chờ HIL 2 board 1 giờ + đo UART1.
   - **File:** `firmware/gw_h2/components/zb_coord/{zb_coord.c,include/zb_coord.h}`, `firmware/gw_h2/components/uart_bridge/{uart_bridge.c,include/uart_bridge.h}`, `main/app_main.c`, `main/CMakeLists.txt`, `docs/API_NOTES.md`.
