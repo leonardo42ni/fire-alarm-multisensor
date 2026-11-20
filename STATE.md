@@ -2,7 +2,7 @@
 
 - **Phase hiện tại:** Phase 2 — Giao thức & Gateway, **triển khai cuốn chiếu trước Phase 1**. Phase 1 (driver SHT31/CCS811/ADC/LED/còi) **tạm hoãn** vì chưa có driver cảm biến và driver đầu ra; `node_h2` tiếp tục dùng dữ liệu giả lập như T-006, `gw_host` mới chỉ parse UART2 + log, chưa gọi fusion/còi/LED.
 - **Trạng thái Phase 0:** **G0 đạt, Phase 0 hoàn thành** (S1–S5 + 6 mục nghiệm thu `review.md` đạt).
-- **Nhánh Git:** `feat/T-202-zb-node` (tách từ `feat/T-201-proto-ndjson`; T-201 commit `3268db6`) → chuyển `feat/gw-comm` sau commit T-202.
+- **Nhánh Git:** `feat/gw-comm` (tách từ `feat/T-202-zb-node`; T-202 commit `ed75f05`).
 - **Remote Git:** `origin` → `https://github.com/leonardo42ni/fire-alarm-multisensor.git` (public); `master` và tag `phase-0-done` đã push.
 - **Task vừa hoàn thành:** `T-202` **đạt code + HIL C10** — Component `zb_node` (Spec §5.3.7) + refactor `node_h2/main` (Phase 2, dùng dữ liệu giả lập vì Phase 1 hoãn).
   - **File:** `firmware/node_h2/components/zb_node/` gồm `zb_node.c` (publish/start, Zigbee lock, `tx_fail` + reset qua app), `zb_node_stack.c` (ED task, signal handler, backoff/reset pending), `zb_node_ep.c` (EP10–15), `include/zb_node.h` (`node_snapshot_t` §5.3.6 + API), `include/zb_node_config.h`, `zb_node_internal.h`, `CMakeLists.txt`; `node_zb_ep.c/h` cũ đã xóa.
