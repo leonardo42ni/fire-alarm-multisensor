@@ -61,14 +61,8 @@
 #define BTN_RESET_MAX_MS 4999u
 #define BTN_JOIN_MIN_MS 5000u
 
-#define PWR_ADC_GPIO 35
-#define PWR_SAMPLE_MS 1000u
-#define PWR_ADC_SAMPLES 16
-#define PS_DIV_NUM 25
-#define PS_DIV_DEN 15
-#define PS_ON_MV 2300
-#define PS_OFF_MV 1500
-#define PS_DEBOUNCE_N 3
+#define SAFE_BOOT_GPIO_MASK ((1ULL << BUZZER_GPIO) | (1ULL << RGB_R_GPIO) | (1ULL << RGB_G_GPIO) | (1ULL << RGB_B_GPIO))
+#define RPT_POLL_MS 1000u
 
 #define STATUS_PERIOD_MS 30000u
 #define MUTE_DEFAULT_S 300u

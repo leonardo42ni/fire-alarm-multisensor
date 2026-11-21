@@ -67,6 +67,8 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `vTaskDelete` | `void vTaskDelete( TaskHandle_t xTaskToDelete ) PRIVILEGED_FUNCTION;` | `components/freertos/FreeRTOS-Kernel/include/freertos/task.h:785` | ESP-IDF v5.5.5 | S1-3 |
 | `esp_zb_ieee_address_by_short` | `esp_err_t esp_zb_ieee_address_by_short(uint16_t short_addr, uint8_t *ieee_addr);` | `managed_components/espressif__esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h:304` | esp-zigbee-lib 1.6.8 | S1-3 |
 | `esp_zb_address_short_by_ieee` | `uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);` | `managed_components/espressif__esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h:293` | esp-zigbee-lib 1.6.8 | S1-3 |
+| `gpio_config` | `esp_err_t gpio_config(const gpio_config_t *pGPIOConfig);` | `components/esp_driver_gpio/include/driver/gpio.h:71` | ESP-IDF v5.5.5 | S1-4 |
+| `gpio_set_level` | `esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level);` | `components/esp_driver_gpio/include/driver/gpio.h:141` | ESP-IDF v5.5.5 | S1-4 |
 
 ## Kiểu dữ liệu / hằng số đã xác minh
 
@@ -171,6 +173,13 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `ESP_ZB_ZDO_SIGNAL_DEVICE_UPDATE` | `= 0x30` | `zdo/esp_zigbee_zdo_common.h:447` | S1-3 |
 | `esp_zb_zdo_signal_device_update_params_t` | struct `{ esp_zb_ieee_addr_t long_addr; uint16_t short_addr; uint8_t status; uint8_t tc_action; uint16_t parent_short; }` | `zdo/esp_zigbee_zdo_common.h:690` | S1-3 |
 | `ESP_ZB_ZDO_STANDARD_DEV_LEFT` | `= 0x02U` (enum `esp_zb_zdo_update_dev_status_t`) | `zdo/esp_zigbee_zdo_common.h:645` | S1-3 |
+| `gpio_config_t` | struct gồm `pin_bit_mask`, `mode`, `pull_up_en`, `pull_down_en`, `intr_type` | `components/esp_driver_gpio/include/driver/gpio.h:46` | S1-4 |
+| `GPIO_MODE_OUTPUT` | `= GPIO_MODE_DEF_OUTPUT` (enum `gpio_mode_t`) | `components/hal/include/hal/gpio_types.h:100` | S1-4 |
+| `GPIO_PULLUP_DISABLE` | `= 0x0` (enum `gpio_pullup_t`) | `components/hal/include/hal/gpio_types.h:107` | S1-4 |
+| `GPIO_PULLDOWN_DISABLE` | `= 0x0` (enum `gpio_pulldown_t`) | `components/hal/include/hal/gpio_types.h:112` | S1-4 |
+| `GPIO_INTR_DISABLE` | `= 0` (enum `gpio_int_type_t`) | `components/hal/include/hal/gpio_types.h:81` | S1-4 |
+| `UART_NUM_2` | `UART_NUM_2` (enum `uart_port_t`) | `components/hal/include/hal/uart_types.h:26` | S1-4 |
+| `UART_SCLK_DEFAULT` (ESP32) | `= SOC_MOD_CLK_APB` | `components/soc/esp32/include/soc/clk_tree_defs.h:232` | S1-4 |
 
 ## Ghi chú xác minh
 
@@ -247,3 +256,4 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 - **S1-3 Zigbee callback:** `ESP_ZB_CORE_REPORT_ATTR_CB_ID` kiểm `attribute.data.value != NULL` và `attribute.data.size`, dùng `memcpy` từ `ESP_ZB_PACKED_STRUCT` (`S16/U16/U32/SINGLE`) vào `zb_evt_t` rồi `xQueueSend(..., 0)`; mọi UART/`ESP_LOGx` nằm ở task `uart_bridge`. Hỗ trợ cả `ESP_ZB_ZCL_ADDR_TYPE_SHORT` (kèm fallback `esp_zb_ieee_address_by_short` khi GW reboot mà Node vẫn còn trong NVS) và `ESP_ZB_ZCL_ADDR_TYPE_IEEE` (`esp_zb_address_short_by_ieee`). `LEAVE_INDICATION` (`0x13`) và `DEVICE_UPDATE` (`0x30`, `DEV_LEFT`, khử trùng qua cache) xóa cache và gửi `leave`; `ESP_ZB_ZDO_SIGNAL_LEAVE` xóa sạch cache và log.
 - **S1-3 IEEE byte order:** Đã xác minh trong `nwk/esp_zigbee_nwk.h:221,299`, `zb_address.h:140-143`, `zb_trace.h:513,528`: `esp_zb_ieee_addr_t` là little-endian (`[0]`=LSB, `[7]`=MSB), nên format `[7]..[0]` ra 16 hex MSB-first khớp `proto_ndjson.h`.
 - **S1-3 build & COM5 boot:** `.\tools\build_all.ps1` PASS cả 3 firmware (`gw_h2.bin` `0x9b710`, 59% free, không warning); `ctest` 5/5 PASS; flash & monitor USB-Serial-JTAG `COM5` PASS (`FORMED|PAN=0x1a62|CH=25|SA=0x0000|PASS`, `PERMIT|OPEN|sec=180`, `START|UART1|TX=10|RX=11`). DoD 1 giờ với Node + đo trực tiếp UART1 (`GPIO10`/`GPIO11`) đang chờ gắn đủ 2 board / `gw_host`.
+- **S1-4 (2026-11-21):** `gw_host` tách component `uart_link` (`UART_NUM_2`, RX=GPIO16, TX=GPIO17, 115200 8N1, buffer 1024); `app_main()` kéo LOW `BUZZER_GPIO` (GPIO4) và `RGB` (`GPIO25/26/27`) ngay đầu hàm (R7); bỏ `PWR_SENSE` khỏi `config.h`; `tools/log_csv.py` ghi `CSV,...` + `pc_time,run_id,label,event` vào `data/raw/<run_id>.csv`.
