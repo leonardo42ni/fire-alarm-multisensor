@@ -69,6 +69,21 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `esp_zb_address_short_by_ieee` | `uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);` | `managed_components/espressif__esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h:293` | esp-zigbee-lib 1.6.8 | S1-3 |
 | `gpio_config` | `esp_err_t gpio_config(const gpio_config_t *pGPIOConfig);` | `components/esp_driver_gpio/include/driver/gpio.h:71` | ESP-IDF v5.5.5 | S1-4 |
 | `gpio_set_level` | `esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level);` | `components/esp_driver_gpio/include/driver/gpio.h:141` | ESP-IDF v5.5.5 | S1-4 |
+| `esp_netif_init` | `esp_err_t esp_netif_init(void);` | `components/esp_netif/include/esp_netif.h:30` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_netif_create_default_wifi_sta` | `esp_netif_t* esp_netif_create_default_wifi_sta(void);` | `components/esp_wifi/include/esp_wifi_default.h:95` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_event_loop_create_default` | `esp_err_t esp_event_loop_create_default(void);` | `components/esp_event/include/esp_event.h:70` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_event_handler_instance_register` | `esp_err_t esp_event_handler_instance_register(esp_event_base_t event_base, int32_t event_id, esp_event_handler_t event_handler, void *event_handler_arg, esp_event_handler_instance_t *instance);` | `components/esp_event/include/esp_event.h:247` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_wifi_init` | `esp_err_t esp_wifi_init(const wifi_init_config_t *config);` | `components/esp_wifi/include/esp_wifi.h:364` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_wifi_set_mode` | `esp_err_t esp_wifi_set_mode(wifi_mode_t mode);` | `components/esp_wifi/include/esp_wifi.h:392` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_wifi_start` | `esp_err_t esp_wifi_start(void);` | `components/esp_wifi/include/esp_wifi.h:421` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_wifi_connect` | `esp_err_t esp_wifi_connect(void);` | `components/esp_wifi/include/esp_wifi.h:471` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_wifi_set_config` | `esp_err_t esp_wifi_set_config(wifi_interface_t interface, wifi_config_t *conf);` | `components/esp_wifi/include/esp_wifi.h:1028` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_netif_sntp_init` | `esp_err_t esp_netif_sntp_init(const esp_sntp_config_t * config);` | `components/esp_netif/include/esp_netif_sntp.h:76` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_crt_bundle_attach` | `esp_err_t esp_crt_bundle_attach(void *conf);` | `components/mbedtls/esp_crt_bundle/include/esp_crt_bundle.h:32` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_mqtt_client_init` | `esp_mqtt_client_handle_t esp_mqtt_client_init(const esp_mqtt_client_config_t *config);` | `components/mqtt/esp-mqtt/include/mqtt_client.h:397` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_mqtt_client_start` | `esp_err_t esp_mqtt_client_start(esp_mqtt_client_handle_t client);` | `components/mqtt/esp-mqtt/include/mqtt_client.h:420` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_mqtt_client_enqueue` | `int esp_mqtt_client_enqueue(esp_mqtt_client_handle_t client, const char *topic, const char *data, int len, int qos, int retain, bool store);` | `components/mqtt/esp-mqtt/include/mqtt_client.h:593` | ESP-IDF v5.5.5 | S3-2 |
+| `esp_mqtt_client_register_event` | `esp_err_t esp_mqtt_client_register_event(esp_mqtt_client_handle_t client, esp_mqtt_event_id_t event, esp_event_handler_t event_handler, void *event_handler_arg);` | `components/mqtt/esp-mqtt/include/mqtt_client.h:640` | ESP-IDF v5.5.5 | S3-2 |
 
 ## Kiểu dữ liệu / hằng số đã xác minh
 
@@ -180,6 +195,12 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 | `GPIO_INTR_DISABLE` | `= 0` (enum `gpio_int_type_t`) | `components/hal/include/hal/gpio_types.h:81` | S1-4 |
 | `UART_NUM_2` | `UART_NUM_2` (enum `uart_port_t`) | `components/hal/include/hal/uart_types.h:26` | S1-4 |
 | `UART_SCLK_DEFAULT` (ESP32) | `= SOC_MOD_CLK_APB` | `components/soc/esp32/include/soc/clk_tree_defs.h:232` | S1-4 |
+| `WIFI_INIT_CONFIG_DEFAULT` | `#define WIFI_INIT_CONFIG_DEFAULT() { ... }` | `components/esp_wifi/include/esp_wifi.h:316` | S3-2 |
+| `ESP_NETIF_SNTP_DEFAULT_CONFIG` | `#define ESP_NETIF_SNTP_DEFAULT_CONFIG(server) ...` | `components/esp_netif/include/esp_netif_sntp.h:52` | S3-2 |
+| `esp_mqtt_client_config_t` | struct gồm `broker` (`address`, `verification`), `credentials` (`username`, `client_id`, `authentication`), `session` (`last_will`, `keepalive`) | `components/mqtt/esp-mqtt/include/mqtt_client.h:234` | S3-2 |
+| `MQTT_TRANSPORT_OVER_SSL` | enum `esp_mqtt_transport_t` (`mqtts://`) | `components/mqtt/esp-mqtt/include/mqtt_client.h:135` | S3-2 |
+| `MQTT_EVENT_CONNECTED` / `DISCONNECTED` / `ERROR` | enum `esp_mqtt_event_id_t` (`= 1 / 2 / 0`) | `components/mqtt/esp-mqtt/include/mqtt_client.h:47-52` | S3-2 |
+| `WIFI_ALL_CHANNEL_SCAN` / `WIFI_CONNECT_AP_BY_SIGNAL` | enum `wifi_scan_method_t` / `wifi_sort_method_t` | `components/esp_wifi/include/esp_wifi_types_generic.h:356,363` | S3-2 |
 
 ## Ghi chú xác minh
 
@@ -257,3 +278,4 @@ Chữ ký phải copy nguyên văn từ header đã cài, kèm đường dẫn v
 - **S1-3 IEEE byte order:** Đã xác minh trong `nwk/esp_zigbee_nwk.h:221,299`, `zb_address.h:140-143`, `zb_trace.h:513,528`: `esp_zb_ieee_addr_t` là little-endian (`[0]`=LSB, `[7]`=MSB), nên format `[7]..[0]` ra 16 hex MSB-first khớp `proto_ndjson.h`.
 - **S1-3 build & COM5 boot:** `.\tools\build_all.ps1` PASS cả 3 firmware (`gw_h2.bin` `0x9b710`, 59% free, không warning); `ctest` 5/5 PASS; flash & monitor USB-Serial-JTAG `COM5` PASS (`FORMED|PAN=0x1a62|CH=25|SA=0x0000|PASS`, `PERMIT|OPEN|sec=180`, `START|UART1|TX=10|RX=11`). DoD 1 giờ với Node + đo trực tiếp UART1 (`GPIO10`/`GPIO11`) đang chờ gắn đủ 2 board / `gw_host`.
 - **S1-4 (2026-11-21):** `gw_host` tách component `uart_link` (`UART_NUM_2`, RX=GPIO16, TX=GPIO17, 115200 8N1, buffer 1024); `app_main()` kéo LOW `BUZZER_GPIO` (GPIO4) và `RGB` (`GPIO25/26/27`) ngay đầu hàm (R7); bỏ `PWR_SENSE` khỏi `config.h`; `tools/log_csv.py` ghi `CSV,...` + `pc_time,run_id,label,event` vào `data/raw/<run_id>.csv`.
+- **S3-2 (2026-11-21):** `gw_host` thêm component `net_mqtt` (`esp_wifi` STA, `esp_netif_sntp`, `esp_mqtt_client` over TLS dùng `esp_crt_bundle_attach`, LWT `status/gateway` = `offline`, publish `sensor/<node>` non-blocking qua `esp_mqtt_client_enqueue`); `cloud/Node_RED_DATN.json` sạch credential (`K6`).
