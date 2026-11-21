@@ -12,7 +12,7 @@ Bias toward **caution, flat C99, and Happy Path stability** (undergraduate thesi
    - If a simpler approach exists, propose it briefly — do not over-design silently.
 2. **Simplicity & File Consolidation:**
    - Write the minimum code that solves the task. Nothing speculative.
-   - **Pack each new module into a SINGLE `.c`/`.h` pair** (≤ 250 lines/file) with minimal boilerplate — do NOT split a feature into 4–5 micro-files (`*_internal.h`, `*_stack.c`, etc.).
+   - **Pack each new module into a SINGLE `.c`/`.h` pair** (minimum lines/file) with minimal boilerplate — do NOT split a feature into 4–5 micro-files (`*_internal.h`, `*_stack.c`, etc.).
    - No abstractions, wrappers, callback registries, or error handling for impossible scenarios.
    - Check before finishing: *"If I wrote 200 lines and 50 can do it cleanly, rewrite it."*
 3. **Surgical Changes:**
